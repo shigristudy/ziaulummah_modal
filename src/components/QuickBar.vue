@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="handleDonation" v-if="current_donation.project" class="">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 p-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
             <input
                 v-model="current_donation.amount"
                 type="number"
