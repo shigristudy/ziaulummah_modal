@@ -26,7 +26,8 @@ export default {
     form: {
       type: Object,
       default:{}
-    }
+    },
+    
   },
   data() {
     return {
@@ -43,7 +44,7 @@ export default {
           reference_id: 'admin_fee_cover',
           description: 'Admin Fee Cover',
           amount: {
-            currency_code: "USD",
+            currency_code: this.form.selected_currency,
             value: 10
           }
         },
@@ -51,7 +52,7 @@ export default {
           reference_id: 'paper_copy',
           description: 'Paper Copy',
           amount: {
-            currency_code: "USD",
+            currency_code: this.form.selected_currency,
             value: 10
           }
         }
@@ -62,7 +63,7 @@ export default {
   mounted() {
     this.makeDonationProduct()
     const link =
-      "https://www.paypal.com/sdk/js?client-id=AQYuvSdIb53kUFXZOgLWx2Ec6LlLHYy_WAUSXq94gSjMoCC5I-tA93u1Dsy3bgZmLfwt_gyogUMIqPsi&disable-funding=credit,card";
+      `https://www.paypal.com/sdk/js?client-id=AQYuvSdIb53kUFXZOgLWx2Ec6LlLHYy_WAUSXq94gSjMoCC5I-tA93u1Dsy3bgZmLfwt_gyogUMIqPsi&disable-funding=credit,card&currency=${this.form.selected_currency}`;
     const script = document.createElement("script");
     script.src = link;
     script.addEventListener("load", this.setupPaypal);
@@ -89,7 +90,7 @@ export default {
           reference_id: this.getReferenceId(donation.project,index),
           description: donation.project.title,
           amount: {
-            currency_code: "USD",
+            currency_code: this.form.selected_currency,
             value: amount
           }
         })  

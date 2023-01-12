@@ -36,6 +36,9 @@ export default {
   fetchProjects(category_id) {
     return axios.get(url(`project-by-category/${category_id}`));
   },
+  fetchAllProjects() {
+    return axios.get(url(`projects`));
+  },
   fetchProject(project_id) {
     return axios.get(url(`project/${project_id}`));
   },
@@ -48,4 +51,7 @@ export default {
   fetchAdminProjects() {
     return axios.get(url(`admin-projects`));
   },
+  getQuickDonationProject() {
+    return axios.get(url('get-quick-donation-project'))
+  }
 };

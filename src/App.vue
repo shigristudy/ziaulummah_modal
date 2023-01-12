@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, ref, computed } from "vue";
+import { reactive, onMounted, ref, computed ,createApp} from "vue";
 import Api from "./services/api";
 import countries from "./data/countries.json";
 import Basket from "./components/Basket.vue";
@@ -10,6 +10,7 @@ import IconDelete from "./components/icons/IconDelete.vue";
 import IconEdit from "./components/icons/IconEdit.vue";
 import IconCheck from "./components/icons/IconCheck.vue";
 import Paypal from "./components/Paypal.vue";
+import QuickBar from "./components/QuickBar.vue";
 
 import { current_donation, form } from "./data/resets";
 let state = reactive({
@@ -28,10 +29,12 @@ let state = reactive({
   current_donation: { ...current_donation },
   form: { ...form },
   stripePublicKey: 'pk_test_51KEZblITpRY73U53TSXaNrW8Uj4zeIFKDFogBqAHeBFrqmtPgflNm5PY0gdbRStebJZnTvqe5GJhaZciHti7t20M00BMb5ZjIB',
-  totalDonation: 0, 
-  donationTotal:0,
-  adminProjects:[],
-  quickDonation:{}
+  totalDonation: 0,
+  donationTotal: 0,
+  adminProjects: [],
+  quickDonation: {},
+  currencies: {"GBP": "£", "USD": "$", "EUR": "€"},
+  selected_currency: 'GBP'
 });
 const donationComponentRef = ref(null)
 onMounted(() => {
@@ -40,7 +43,24 @@ onMounted(() => {
   // getAdminProjects()
   bindSelectorClick();
   bindProjectSelectorClick();
+
+  bindQuickBar();
 });
+
+async function bindQuickBar() {
+
+  const quickbar = createApp(QuickBar, {
+    onAdded(donation) {
+      donationAdded(donation)
+
+      document.getElementById("synergidigital-snackbar").classList.remove('hidden')
+      setTimeout(function () {
+        document.getElementById("synergidigital-snackbar").classList.add('hidden')
+      }, 2000);
+    }
+
+  }).mount('#synergidigital-quick-donation')
+}
 
 async function getAdminProjects() {
   let { data } = await Api.fetchAdminProjects();
@@ -53,7 +73,7 @@ function bindSelectorClick() {
     let selector = document
       .getElementById("donationModal")
       .getAttribute("data-selector");
-    let shoBasketButton = document.querySelector("#btn-show-basket");
+    let shoBasketButton = document.querySelector("#synergidigital-btn-show-basket");
     if (shoBasketButton != null) {
       shoBasketButton.addEventListener("click", () => {
         openModel();
@@ -70,24 +90,43 @@ function bindSelectorClick() {
 }
 function bindProjectSelectorClick() {
   if (document.getElementById("donationModal")) {
-    let btnAddToCart = document.querySelector(".btn-add-project-to-cart");
+    let btnAddToCart = document.querySelector(".synergidigital-btn-add-project-to-cart");
     if (btnAddToCart != null) {
       btnAddToCart.addEventListener("click", (e) => {
-        let category_id = e.target.getAttribute('data-category-id')
-        let project_id = e.target.getAttribute('data-project-id')
 
-        state.quickDonation = {
-          category_id: category_id,
-          project_id:project_id
-        }
+        let category_id = parseInt(e.target.getAttribute('data-category-id'))
+        let project_id = parseInt(e.target.getAttribute('data-project-id'))
+        let amount = parseFloat(e.target.getAttribute('data-amount'))
+        let monthly = parseInt(e.target.getAttribute('data-monthly'))
+        console.log(category_id,project_id,amount,monthly)
         
-        donationComponentRef.value.quickDonate(state.quickDonation)
-
-        state.isAddDonationOpened = true
+        getProjectDetails(category_id,project_id,amount,monthly)
       });
     }
   }
 }
+
+async function getProjectDetails(category_id,project_id,amount,monthly) {
+  const { data } = await Api.fetchProject(project_id)
+  let quick_donation = {
+      category_id: category_id,
+      project_id: project_id,
+      donation_type_id: data.donation_types[0].id,
+      amount: amount,
+      monthly: monthly,
+      fix_amount: 0,
+      qty: 1,
+      totalAmount: null,
+      project: data
+  }
+
+  donationAdded(quick_donation)
+  document.getElementById("synergidigital-snackbar").classList.remove('hidden')
+  setTimeout(function () {
+    document.getElementById("synergidigital-snackbar").classList.add('hidden')
+  }, 2000);
+
+} 
 
 const hasMonthly = computed(() => {
   return state.donations.some((d) => d.monthly);
@@ -122,59 +161,10 @@ function editItem(index) {
   state.step = 1;
 }
 
-// async function storeDonation() {
-//   if (validateDonation()) {
-//     let form = state.form;
-//     form.donations = state.donations;
-//     form.donations.map((f) => {
-//       state.totalAmount += f.amount * f.qty;
-//       f.totalAmount = f.amount * f.qty;
-//       return (f.amount = f.amount * f.qty);
-//     });
-//     state.form = form;
-
-//     stepForward();
-//   }
-// }
-
-// async function stripePayment(token) {
-//   state.form.donations = state.donations
-//   let { data } = await Api.saveDonation(state.form);
-//   if (data.success == true) {
-//     let payment = {};
-//     payment.token = token;
-//     payment.name = state.form.first_name;
-//     payment.email = state.form.email;
-//     payment.amount = { monthly: 0, single: 0 };
-//     payment.donor = data.donor;
-//     payment.monthly_donations = data.monthly_donations;
-//     state.donations.map((f) => {
-//       if (f.monthly) {
-//         payment.amount.monthly += f.amount;
-//       }
-//       if (!f.monthly) {
-//         payment.amount.single += f.amount;
-//       }
-//     });
-//     let pay = await Api.makePayment(payment);
-//     if (pay.data.success) {
-//       initAgain();
-//       showSuccessPage();
-//     }
-//   }
-// }
-
-// async function PaypalPaymentSuccess(response) {
-//   state.form.donations = state.donations
-//   let { data } = await Api.saveDonation(state.form);
-
-//   initAgain();
-//   showSuccessPage();
-// }
-
 function initAgain() {
   localStorage.removeItem('synergi-zuf-donations')
   state.donations = [];
+  state.form = { ...form }
 }
 
 function showSuccessPage() {
@@ -204,6 +194,8 @@ function assets(asset) {
 }
 
 function donationAdded(donation) {
+  console.log(donation)
+
   if (state.selectedItem == null) {
     state.donations = [...state.donations, { ...donation }];
     localStorage.setItem('synergi-zuf-donations',JSON.stringify(state.donations))
@@ -214,7 +206,6 @@ function donationAdded(donation) {
 }
 
 function toggleCustomProject(type, selected) {
-  console.log(type,selected)
   if (type == "admin_fee") { 
     state.form.admin_fee_cover = selected
     // console.log(type, selected, state.form.admin_fee_cover)
@@ -228,16 +219,22 @@ function toggleCustomProject(type, selected) {
 function updateMiniCart(amount) {
   let minicart = document.getElementById("synergy-mini-cart-label");
   if (minicart) {
-    minicart.innerText = "£" + parseFloat(amount).toFixed(2);
+    minicart.innerText = state.currencies[state.form.selected_currency] + parseFloat(amount).toFixed(2);
   }
 }
 </script>
   
 <template>
   <div id="synergy-donation-tailwind">
+
+    <div id="synergidigital-snackbar" class="absolute z-50 bg-green text-white bottom-2 left-1/2 transform -translate-x-1/2 rounded-sm hidden">
+      <p class="px-3">Donation Added to Basket</p>
+    </div>
+
     <VueSidePanel v-model="state.isCartOpened" lock-scroll class="md:w-1/3 w-full bg-gray-100">
       <Basket :donations="state.donations" 
             :form="state.form" 
+            :currencies="state.currencies" 
             :stripePublicKey="state.stripePublicKey"
             @toggleCustomProject="toggleCustomProject" 
             @initAgain="initAgain"

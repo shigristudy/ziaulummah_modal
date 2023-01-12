@@ -9,9 +9,15 @@
                 Your Donation
               </h2>
               <p>See the details of your donation below:</p> 
-            </div>
-            <div class="ml-3 flex h-7 items-center">
-             
+              <div class="mt-2">
+                <label for="select-currency">Select Currency</label>
+                <select v-model="form.selected_currency"
+                  class="ml-2 mt-1 form-select text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none" name="currency" id="select-currency">
+                  <option value="GBP">GBP</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
             </div>
           </div>
           <hr>
@@ -69,7 +75,7 @@
             <li class="relative w-1/2 flex flex-col justify-center items-center !border-2 !border-green p-4 bg-white">
               <h2 class="font-bold text-lg text-green mb-1">Paper copy of reciept</h2>
               <input type="hidden" :value="paper_copy_amount">
-              <p class="font-bold text-lg mb-1">£{{ paper_copy_amount }}</p>
+              <p class="font-bold text-lg mb-1">{{ $formatAmount(paper_copy_amount) }}</p>
               <input class="sr-only peer" type="checkbox" v-model="isSelectedPaperCopy" id="admin_fee_cover" @change="addCustomProject('paper_copy')">
               <label for="admin_fee_cover" 
                 :class="{
@@ -92,7 +98,7 @@
             <li class="relative w-1/2 flex flex-col justify-center items-center !border-2 !border-green p-4 bg-white">
               <h2 class="font-bold text-lg text-green mb-1">Admin Fee Cover</h2>
               <input type="hidden" :value="admin_fee_amount" >
-              <p class="font-bold text-lg mb-1">£{{ admin_fee_amount }}</p>
+              <p class="font-bold text-lg mb-1">{{ $formatAmount(admin_fee_amount) }}</p>
               <input class="sr-only peer" type="checkbox" v-model="isAdminFeeSelected" id="paper_copy" @change="addCustomProject('admin_fee')">
               <label for="paper_copy" 
                 :class="{
@@ -134,7 +140,7 @@
           <hr>
           <div class="flex justify-between text-base font-medium text-gray-900 mt-4">
             <p>Thereafter per month:</p>
-            <p>£292.00</p>
+            <p>{{ $formatAmount(totalMonthlyDonationThereAfter) }}</p>
           </div>
           <div class="mt-6 flex justify-end">
             <button :disabled="!donations.length" type="button" @click="moveForward()" :class="{
@@ -247,7 +253,7 @@
                 donation by 25%
               </p>
               <p class="text-gray-500 mb-2">
-                With Gift Aid, your donation of £50.00 would be worth £62.50
+                With Gift Aid, your donation of {{ $formatAmount(50.00) }} would be worth {{ $formatAmount(62.50) }}
                 at no <br />
                 extra cost to you.
               </p>
@@ -273,14 +279,23 @@
               v-model="form.gift_aid"
               :value="1"
             />
-            <label for="agreed"
-              >I Agree, I would like to boost my donation with Gift Aid sadf
+            <label for="agreed" class="ml-1"
+              >I Agree, I would like to boost my donation with Gift Aid
             </label>
           </div>
-
-          
         </div>
 
+        <div class="my-2">
+          <input
+            id="synergidigital-accept-terms-business"
+            type="checkbox"
+            v-model="form.terms_agreement"
+            :value="1"
+          />
+          <label for="synergidigital-accept-terms-business" class="ml-1">
+            By checking this box, you are agreeing to our terms of service
+          </label>
+        </div>
         <div class="mt-4">
           <p class="font-bold">Choose Payment Method</p>
           <div class="flex gap-6">
@@ -359,6 +374,7 @@
           @moveBack="moveBack()"
           :donations="donations"
           :form="form"
+          :currencies="currencies"
           :amount="totalAmount"
           @PaymentFailed="PaypalPaymentFailed"
           @PaymentSuccess="PaypalPaymentSuccess"
@@ -415,7 +431,8 @@ export default {
   props: [
     'donations',
     'form',
-    'stripePublicKey'
+    'stripePublicKey',
+    'currencies'
   ],
   components: {
     IconCreditCard,
@@ -490,6 +507,11 @@ export default {
           this.errors.post_code = "Postal Code  is required.";
           validated = false;
         }
+
+        if (!this.form.terms_agreement) {
+          this.errors.terms_agreement = "Please Agree Terms and Condition";
+          validated = false;
+        }
       }
 
       return validated
@@ -522,7 +544,9 @@ export default {
         payment.email = this.form.email;
         payment.amount = { monthly: 0, single: 0 };
         payment.donor = data.donor;
+        payment.currency = data.currency;
         payment.monthly_donations = data.monthly_donations;
+        payment.donation = data.donation;
         this.donations.map((f) => {
           if (f.monthly) {
             if (f.amount) {
@@ -541,7 +565,7 @@ export default {
         });
         let pay = await Api.makePayment(payment);
         if (pay.data.success) {
-          initAgain();
+          this.initAgain();
           this.moveForward()
         }
       }
@@ -560,7 +584,8 @@ export default {
       this.$emit('initAgain')
     },
     $formatAmount(amount) {
-      return "£" + parseFloat(amount).toFixed(2);
+      // this.currencies[this.form.selected_currency]
+      return this.currencies[this.form.selected_currency] + parseFloat(amount).toFixed(2);
     },
   },
   
@@ -591,6 +616,20 @@ export default {
       const total = this.donations.reduce((accumulator, currentValue) => {
         const amount = currentValue.amount ?? currentValue.fix_amount
         return accumulator + amount
+      }, 0)
+      
+      return total
+    },
+    totalMonthlyDonationThereAfter() {
+
+      if (this.donations.length <= 0) return 0
+
+      const total = this.donations.reduce((accumulator, currentValue) => {
+        if (currentValue.monthly) {
+          const amount = currentValue.amount ?? currentValue.fix_amount
+          return accumulator + amount
+        }
+        return accumulator;
       }, 0)
       
       return total

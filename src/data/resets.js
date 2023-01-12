@@ -27,31 +27,9 @@ let form = {
     date: new Date().toJSON().slice(0, 10).replace(/-/g, '-'),
     paper_copy: false,
     admin_fee_cover: false,
-}
-
-let admin_fee = {
-    category_id: 0,
-    project_id: 0,
-    donation_type_id:'',
-    amount: null,
-    monthly: false,
-    fix_amount: 5,
-    qty: 1,
-    totalAmount: null,
-    project: null
-}
-
-let paper_copy = {
-    category_id: 0,
-    project_id: 0,
-    donation_type_id:'',
-    amount: null,
-    monthly: false,
-    fix_amount: 5,
-    qty: 1,
-    totalAmount: null,
-    project: null
+    terms_agreement: false,
+    selected_currency:'GBP'
 }
 
 
-export { current_donation,form,admin_fee,paper_copy };
+export { current_donation,form };

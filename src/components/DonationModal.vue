@@ -15,8 +15,8 @@
           </div>
         </div>
 
-        <div class="border-t border-gray-200 py-6 px-4 sm:px-10" v-if="categories">
-          <div class="mb-4">
+        <div class="border-t border-gray-200 py-6 px-4 sm:px-10" v-if="projects">
+          <!-- <div class="mb-4">
             <label for="select-category" class=" text-green font-bold block mb-2 text-lg">Select Category</label>
             <select
               id="select-category"
@@ -28,7 +28,7 @@
               <option :value="0">Select a Category</option>
               <option v-for="(cat,index) in categories" :key="'category_'+ index" :value="cat.id">{{ cat.name }}</option>
             </select>
-          </div>
+          </div> -->
 
           <div class="mb-4">
             <label for="select-project" class=" text-green font-bold block mb-2 text-lg">Select Project</label>
@@ -69,11 +69,11 @@
             </ul>
           </div>
           
-          <div class="mb-4">
-            <label for="select-amounts" class=" text-green font-bold block mb-2 text-lg">Donation amount</label>
+          <div class="mb-4" v-if="current_donation.project && current_donation.project.fix_amounts">
+            <label for="select-amounts" class=" text-green font-bold block mb-2 text-lg" >Donation amount</label>
             <ul class="flex gap-2">
-              <li class="relative" v-for="(amount,index) in donation_amounts" :key="index">
-                <input class="sr-only peer" type="radio" v-model="current_donation.fix_amount" :value="amount" name="amount" :id="'amount_'+amount">
+              <li class="relative" v-for="(amount,index) in current_donation.project.fix_amounts.split(',')" :key="index">
+                <input class="sr-only peer" type="radio" v-model="current_donation.fix_amount" :value="parseFloat(amount)" name="amount" :id="'amount_'+amount">
                 <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green peer-checked:ring-2 peer-checked:border-transparent" :for="'amount_'+amount">£{{ amount }}</label>
                 <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
               </li>
@@ -136,6 +136,7 @@ import { current_donation } from "../data/resets"
 export default {
   data() {
     return {
+      wordpress_page_id:0,
       donation_amounts: [5, 10, 20, 50, 100],
       categories: null,
       projects: null,
@@ -157,17 +158,10 @@ export default {
     }
   },
   created() {
-    this.fetchcategories();
+    this.getWordpressCurrentPageID();
+    this.fetchProjects()
   },
   methods: {
-    async quickDonate(project) {
-      
-      // const { data } = await Api.fetchProject(project.project_id)
-      // this.current_donation.category_id = project.project_id
-      // this.current_donation.project_id = project.project_id
-      // this.current_donation.donation_type_id = data.donation_types[0].id
-      
-    },
     async getWordpressCurrentPageID() {
         var page_body = document.querySelector('body.page');
 
@@ -183,36 +177,33 @@ export default {
                 }
             });
         }
-        return parseInt(id);
+        this.wordpress_page_id = 1//parseInt(id);
     },
-    async fetchcategories() {
-      const { data } = await Api.fetchCategories()
-      this.categories = data
+    // async fetchcategories() {
+    //   const { data } = await Api.fetchCategories()
+    //   this.categories = data
 
-      const id = await this.getWordpressCurrentPageID();
-      this.wordpressPageID = id
+    //   const id = await this.getWordpressCurrentPageID();
+    //   this.wordpressPageID = id
 
-      this.categories.forEach(cat => {
-        if (cat.wordpress_page_id == this.wordpressPageID) {
-          this.current_donation.category_id = cat.id
-          this.fetchProjects()
-        }
-      });
+    //   this.categories.forEach(cat => {
+    //     if (cat.wordpress_page_id == this.wordpressPageID) {
+    //       this.current_donation.category_id = cat.id
+    //       this.fetchProjects()
+    //     }
+    //   });
 
-      console.log("current donation" ,this.current_donation)
-    },
-    trigger(element_id) {
-      console.log(element_id)
-      var event = document.createEvent("Event");
-      event.initEvent("change", false, true); 
-      document.getElementById(element_id).dispatchEvent(event);
-    },  
+    //   console.log("current donation" ,this.current_donation)
+    // },  
     async fetchProjects() {
-      if (this.current_donation.category_id) {
-        const { data } = await Api.fetchProjects(this.current_donation.category_id)
-        this.projects = data
-        // Select First And
-      }
+      const { data } = await Api.fetchAllProjects()
+      this.projects = data
+
+      const pagedProject = this.projects.find((value, index) => {
+        return value.wordpress_page_id == this.wordpress_page_id
+      })
+      this.current_donation.project_id = pagedProject.id
+      this.current_donation.project = pagedProject
     },
     addDonation() {
       
@@ -228,10 +219,7 @@ export default {
     validateStep() {
       this.validated = true
       this.errors = {};
-      if (!this.current_donation.category_id) {
-        this.errors.category_id = "Category is required.";
-        this.validated = false;
-      }
+      
       if (!this.current_donation.project_id) {
         this.errors.project_id = "Project is required.";
         this.validated = false;
