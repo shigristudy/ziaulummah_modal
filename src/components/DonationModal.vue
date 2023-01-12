@@ -177,7 +177,7 @@ export default {
                 }
             });
         }
-        this.wordpress_page_id = 1//parseInt(id);
+        this.wordpress_page_id = parseInt(id);
     },
     // async fetchcategories() {
     //   const { data } = await Api.fetchCategories()
