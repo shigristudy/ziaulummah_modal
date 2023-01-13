@@ -9,15 +9,6 @@
                 Your Donation
               </h2>
               <p>See the details of your donation below:</p> 
-              <div class="mt-2">
-                <label for="select-currency">Select Currency</label>
-                <select v-model="form.selected_currency"
-                  class="ml-2 mt-1 form-select text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none" name="currency" id="select-currency">
-                  <option value="GBP">GBP</option>
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                </select>
-              </div>
             </div>
           </div>
           <hr>

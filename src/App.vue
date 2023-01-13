@@ -244,6 +244,8 @@ function updateMiniCart(amount) {
     <VueSidePanel v-model="state.isAddDonationOpened" lock-scroll class="md:w-1/3 w-full bg-gray-100">
       <DonationModal 
       ref="donationComponentRef"
+      :form="state.form" 
+      :currencies="state.currencies"
       @added="donationAdded"/>
     </VueSidePanel>
   </div>

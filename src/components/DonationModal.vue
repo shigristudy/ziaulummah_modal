@@ -11,6 +11,15 @@
               Add donation
               </h2>
               <p>Choose from the options below:</p>
+              <div class="mt-2">
+                <label for="select-currency">Select Currency</label>
+                <select v-model="form.selected_currency"
+                  class="ml-2 mt-1 form-select text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none" name="currency" id="select-currency">
+                  <option value="GBP">GBP</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -74,7 +83,7 @@
             <ul class="flex gap-2">
               <li class="relative" v-for="(amount,index) in current_donation.project.fix_amounts.split(',')" :key="index">
                 <input class="sr-only peer" type="radio" v-model="current_donation.fix_amount" :value="parseFloat(amount)" name="amount" :id="'amount_'+amount">
-                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green peer-checked:ring-2 peer-checked:border-transparent" :for="'amount_'+amount">£{{ amount }}</label>
+                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green peer-checked:ring-2 peer-checked:border-transparent" :for="'amount_'+amount">{{ $formatAmount(amount) }}</label>
                 <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
               </li>
             </ul>
@@ -134,6 +143,7 @@
 import Api from "../services/api";
 import { current_donation } from "../data/resets"
 export default {
+  props:['form','currencies'],
   data() {
     return {
       wordpress_page_id:0,
@@ -230,7 +240,11 @@ export default {
       }
 
       return this.validated
-    }
+    },
+    $formatAmount(amount) {
+      // this.currencies[this.form.selected_currency]
+      return this.currencies[this.form.selected_currency] + parseFloat(amount).toFixed(2);
+    },
   },
   computed: {
     donation_types() {
