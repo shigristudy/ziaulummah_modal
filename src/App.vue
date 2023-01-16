@@ -222,6 +222,11 @@ function updateMiniCart(amount) {
     minicart.innerText = state.currencies[state.form.selected_currency] + parseFloat(amount).toFixed(2);
   }
 }
+
+function addAnotherDonation() {
+  state.isCartOpened = false
+  state.isAddDonationOpened = true
+}
 </script>
   
 <template>
@@ -238,6 +243,7 @@ function updateMiniCart(amount) {
             :stripePublicKey="state.stripePublicKey"
             @toggleCustomProject="toggleCustomProject" 
             @initAgain="initAgain"
+            @addAnotherDonation="addAnotherDonation"
             @totalAmount="updateMiniCart"
             @removeItem="removeItem"/>
     </VueSidePanel>

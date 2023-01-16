@@ -133,7 +133,14 @@
             <p>Thereafter per month:</p>
             <p>{{ $formatAmount(totalMonthlyDonationThereAfter) }}</p>
           </div>
-          <div class="mt-6 flex justify-end">
+          <div class="mt-6 flex justify-between">
+            <button :disabled="!donations.length" type="button" @click="makeAnother()" class="bg-green px-6 pt-2.5 pb-2 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 mr-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Add More
+            </button>
+            
             <button :disabled="!donations.length" type="button" @click="moveForward()" :class="{
               'bg-gray-400 cursor-not-allowed hover:bg-gray-400' : !donations.length,
               'bg-red' : donations.length
@@ -277,6 +284,36 @@
         </div>
 
         <div class="my-2">
+          <label for="select-currency">I would like to be contacted via</label>
+          <div class="grid grid-cols-2">
+            <div class="form-check">
+              <input v-model="form.contact_medium" value="Post" type="radio" name="contact_medium" id="contact_medium_1">
+              <label class="ml-2" for="contact_medium_1">
+                Post
+              </label>
+            </div>
+            <div class="form-check">
+              <input v-model="form.contact_medium" value="Email" type="radio" name="contact_medium" id="contact_medium_2">
+              <label class="ml-2" for="contact_medium_2">
+                Email
+              </label>
+            </div>
+            <div class="form-check">
+              <input v-model="form.contact_medium" value="Phone" type="radio" name="contact_medium" id="contact_medium_3">
+              <label class="ml-2" for="contact_medium_3">
+                Phone
+              </label>
+            </div>
+            <div class="form-check">
+              <input v-model="form.contact_medium" value="SMS" type="radio" name="contact_medium" id="contact_medium_4">
+              <label class="ml-2" for="contact_medium_4">
+                SMS
+              </label>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="my-2">
           <input
             id="synergidigital-accept-terms-business"
             type="checkbox"
@@ -287,6 +324,7 @@
             By checking this box, you are agreeing to our terms of service
           </label>
         </div>
+        <hr>
         <div class="mt-4">
           <p class="font-bold">Choose Payment Method</p>
           <div class="flex gap-6">
@@ -448,6 +486,7 @@ export default {
   methods: {
     makeAnother() {
       this.step = 1
+      this.$emit('addAnotherDonation')
     },
     assets(asset) {
       return Api.assets(asset);

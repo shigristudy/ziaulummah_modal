@@ -23,6 +23,7 @@ let form = {
     reason: null,
     notes: null,
     gift_aid: 0,
+    contact_medium: "",
     payment_type: 'Credit Card',
     date: new Date().toJSON().slice(0, 10).replace(/-/g, '-'),
     paper_copy: false,
