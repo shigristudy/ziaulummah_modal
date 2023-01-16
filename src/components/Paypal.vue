@@ -45,7 +45,7 @@ export default {
           description: 'Admin Fee Cover',
           amount: {
             currency_code: this.form.selected_currency,
-            value: 10
+            value: 5
           }
         },
         paper_copy: {
@@ -53,7 +53,7 @@ export default {
           description: 'Paper Copy',
           amount: {
             currency_code: this.form.selected_currency,
-            value: 10
+            value: 3
           }
         }
           

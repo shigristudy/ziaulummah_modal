@@ -477,8 +477,8 @@ export default {
       errors: {},
       // isSelectedPaperCopy:false,
       // isAdminFeeSelected: false,
-      paper_copy_amount:10,
-      admin_fee_amount: 10,
+      paper_copy_amount:3,
+      admin_fee_amount: 5,
       // donationTotal:0,
       // totalDonation: 0,
     }
