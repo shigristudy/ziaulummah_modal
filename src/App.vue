@@ -80,10 +80,12 @@ function bindSelectorClick() {
       });
     }
 
-    let showDonationButton = document.querySelector(".synergy-btn-show-donation-modal");
-    if (showDonationButton != null) {
-      showDonationButton.addEventListener("click", () => {
-        openDonationModal();
+    let donation_buttons = document.querySelectorAll(".synergy-btn-show-donation-modal");
+    if (donation_buttons) {
+      donation_buttons.forEach((element) => {
+        element.addEventListener("click", () => {
+          openDonationModal();
+        });  
       });
     }
   }
