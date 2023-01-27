@@ -42,8 +42,8 @@ export default {
   fetchProject(project_id) {
     return axios.get(url(`project/${project_id}`));
   },
-  fetchGatewayKey(gateway){
-    return axios.get(url(`payments/gateways/${gateway}/key`));
+  fetchGateways(){
+    return axios.get(url(`payments/gateways`));
   },
   assets(asset) {
     return import.meta.env.VITE_ASSETS_URL+ "/" + asset;
@@ -53,5 +53,8 @@ export default {
   },
   getQuickDonationProject() {
     return axios.get(url('get-quick-donation-project'))
+  },
+  gocardlessHostedUrl(payload) {
+    return axios.post(url('gocardless-hosted-url'),payload)
   }
 };

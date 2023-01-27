@@ -27,17 +27,16 @@ export default {
       type: Object,
       default:{}
     },
+    paypalPublicKey: {
+      type: String,
+      default:""
+    }
     
   },
   data() {
     return {
       loaded: false,
       paidFor: false,
-      product: {
-        price: 20.00,
-        description: "leg lamp from that one movie",
-        img: "./assets/lamp.jpg",
-      },
       purchase_units: [],
       static_projects: {
         admin_fee: {
@@ -56,14 +55,13 @@ export default {
             value: 3
           }
         }
-          
       }
     };
   },
   mounted() {
     this.makeDonationProduct()
     const link =
-      `https://www.paypal.com/sdk/js?client-id=AQYuvSdIb53kUFXZOgLWx2Ec6LlLHYy_WAUSXq94gSjMoCC5I-tA93u1Dsy3bgZmLfwt_gyogUMIqPsi&disable-funding=credit,card&currency=${this.form.selected_currency}`;
+      `https://www.paypal.com/sdk/js?client-id=${this.paypalPublicKey}&disable-funding=credit,card&currency=${this.form.selected_currency}`;
     const script = document.createElement("script");
     script.src = link;
     script.addEventListener("load", this.setupPaypal);

@@ -28,7 +28,8 @@ let state = reactive({
   totalAmount: 0,
   current_donation: { ...current_donation },
   form: { ...form },
-  stripePublicKey: 'pk_test_51KEZblITpRY73U53TSXaNrW8Uj4zeIFKDFogBqAHeBFrqmtPgflNm5PY0gdbRStebJZnTvqe5GJhaZciHti7t20M00BMb5ZjIB',
+  stripePublicKey: '',
+  gateways:[],
   totalDonation: 0,
   donationTotal: 0,
   adminProjects: [],
@@ -38,7 +39,7 @@ let state = reactive({
 });
 const donationComponentRef = ref(null)
 onMounted(() => {
-  // getPublicKey();
+  getGateways();
   // getProjects();
   // getAdminProjects()
   bindSelectorClick();
@@ -73,11 +74,13 @@ function bindSelectorClick() {
     let selector = document
       .getElementById("donationModal")
       .getAttribute("data-selector");
-    let shoBasketButton = document.querySelector("#synergidigital-btn-show-basket");
-    if (shoBasketButton != null) {
-      shoBasketButton.addEventListener("click", () => {
-        openModel();
-      });
+    let showBasketButton = document.querySelectorAll(".synergidigital-btn-show-basket");
+    if (showBasketButton) {
+      showBasketButton.forEach((element) => {
+        element.addEventListener("click", () => {
+          openModel();
+        })
+      })
     }
 
     let donation_buttons = document.querySelectorAll(".synergy-btn-show-donation-modal");
@@ -180,9 +183,10 @@ function onlyNumber($event) {
   }
 }
 
-async function getPublicKey() {
-  const { data } = await Api.fetchGatewayKey("stripe");
-  state.stripePublicKey = data?.data?.public_key;
+async function getGateways() {
+  const { data } = await Api.fetchGateways();
+  state.gateways = data
+  // state.stripePublicKey = data?.data?.public_key;
 }
 function openModel() {
   state.isCartOpened = true
@@ -242,6 +246,7 @@ function addAnotherDonation() {
       <Basket :donations="state.donations" 
             :form="state.form" 
             :currencies="state.currencies" 
+            :gateways="state.gateways" 
             :stripePublicKey="state.stripePublicKey"
             @toggleCustomProject="toggleCustomProject" 
             @initAgain="initAgain"

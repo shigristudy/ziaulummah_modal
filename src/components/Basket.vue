@@ -287,25 +287,25 @@
           <label for="select-currency">I would like to be contacted via</label>
           <div class="grid grid-cols-2">
             <div class="form-check">
-              <input v-model="form.contact_medium" value="Post" type="radio" name="contact_medium" id="contact_medium_1">
+              <input v-model="form.contact_medium" value="Post" type="checkbox" name="contact_medium" id="contact_medium_1">
               <label class="ml-2" for="contact_medium_1">
                 Post
               </label>
             </div>
             <div class="form-check">
-              <input v-model="form.contact_medium" value="Email" type="radio" name="contact_medium" id="contact_medium_2">
+              <input v-model="form.contact_medium" value="Email" type="checkbox" name="contact_medium" id="contact_medium_2">
               <label class="ml-2" for="contact_medium_2">
                 Email
               </label>
             </div>
             <div class="form-check">
-              <input v-model="form.contact_medium" value="Phone" type="radio" name="contact_medium" id="contact_medium_3">
+              <input v-model="form.contact_medium" value="Phone" type="checkbox" name="contact_medium" id="contact_medium_3">
               <label class="ml-2" for="contact_medium_3">
                 Phone
               </label>
             </div>
             <div class="form-check">
-              <input v-model="form.contact_medium" value="SMS" type="radio" name="contact_medium" id="contact_medium_4">
+              <input v-model="form.contact_medium" value="SMS" type="checkbox" name="contact_medium" id="contact_medium_4">
               <label class="ml-2" for="contact_medium_4">
                 SMS
               </label>
@@ -327,8 +327,9 @@
         <hr>
         <div class="mt-4">
           <p class="font-bold">Choose Payment Method</p>
-          <div class="flex gap-6">
-            <div class="flex gap-2">
+          
+          <div class="flex gap-6 flex-col">
+            <div class="flex gap-2" v-if="isGatewayEnabled('stripe') && (containsOneOff && hasMonthly) || containsOneOff">
               <input
                 id="radio1"
                 type="radio"
@@ -344,7 +345,8 @@
                 Credit Card</label
               >
             </div>
-            <div class="flex gap-2">
+            
+            <div class="flex gap-2" v-if="isGatewayEnabled('paypal') && !hasMonthly">
               <input
                 :disabled="hasMonthly"
                 id="radio2"
@@ -365,6 +367,25 @@
                 <span v-else>Paypal</span>
               </label>
             </div>
+
+            <div class="flex gap-2" v-if="isGatewayEnabled('gocardless') && !containsOneOff">
+              <input
+                :disabled="containsOneOff"
+                id="radio3"
+                type="radio"
+                v-model="form.payment_type"
+                name="method"
+                value="Gocardless"
+              />
+              <label
+                for="radio3"
+                class="flex gap-1 items-center"
+              >
+                <IconCreditCard />
+                Gocardless</label
+              >
+            </div>
+
           </div>
         </div>
         <ul v-if="errors" class="list-disc px-6" ref="errorsRefs">
@@ -399,9 +420,11 @@
           </div>
         </div>
         <hr>
+       
         <Paypal
           @moveBack="moveBack()"
           :donations="donations"
+          :paypalPublicKey="getGatewayPublicKey('paypal')"
           :form="form"
           :currencies="currencies"
           :amount="totalAmount"
@@ -410,12 +433,21 @@
           v-if="form.payment_type == 'PayPal'"
         />
 
+        <Gocardless
+          v-else-if="form.payment_type =='Gocardless'"
+          @moveBack="moveBack()"
+          @completed="goCardlesscompleted"
+          :amount="totalAmount"
+          :form="form"
+          :donations="donations"
+        />
+        
         <Stripe
           v-else
           @moveBack="moveBack()"
           @stripePayment="stripePayment"
           :amount="totalAmount"
-          :stripePublicKey="stripePublicKey"
+          :stripePublicKey="getGatewayPublicKey('stripe')"
           :customer="form"
         />
 
@@ -456,12 +488,14 @@ import IconPaypalCard from "../components/icons/IconPaypalCard.vue";
 import IconCheck from "../components/icons/IconCheck.vue";
 import Paypal from "../components/Paypal.vue";
 import Stripe from "../components/Stripe.vue";
+import Gocardless from "../components/Gocardless.vue";
 export default {
   props: [
     'donations',
     'form',
     'stripePublicKey',
-    'currencies'
+    'currencies',
+    'gateways'
   ],
   components: {
     IconCreditCard,
@@ -469,6 +503,7 @@ export default {
     IconCheck,
     Stripe,
     Paypal,
+    Gocardless,
   },
   data() {
     return {
@@ -484,6 +519,16 @@ export default {
     }
   },
   methods: {
+    getGatewayPublicKey(gateway) {
+      let p_gateway = this.gateways.find((payment) => (payment.gateway == gateway))
+      if (!p_gateway) return "";
+
+      return p_gateway.public_key
+    },
+    isGatewayEnabled(gateway) {
+      let p_gateway = this.gateways.find((payment) => (payment.gateway == gateway))
+      return (p_gateway.is_enabled == 1) ? true : false
+    },
     makeAnother() {
       this.step = 1
       this.$emit('addAnotherDonation')
@@ -563,6 +608,10 @@ export default {
     },
     removeItem(index) {
       this.$emit('removeItem',index)
+      localStorage.setItem('synergi-zuf-donations',JSON.stringify(this.donations))
+    },
+    goCardlesscompleted(res) {
+      console.log(res)
     },
     async stripePayment(token) {
       this.form.donations = this.donations
@@ -622,6 +671,11 @@ export default {
   computed: {
     hasMonthly() {
       return this.donations.some((d) => d.monthly);
+    },
+    containsOneOff() {
+      if (this.isAdminFeeSelected) return true
+      if (this.isSelectedPaperCopy) return true
+      return this.donations.some((d) => !d.monthly)
     },
     isAdminFeeSelected: {
       get() {

@@ -59,15 +59,11 @@
             </circle>
           </svg>
         </button>
-        
-        
       </div>
     </form>
   </div>
 </template>
 <script>
-import axios from 'axios';
-
 export default {
   props: ["amount","customer","stripePublicKey"],
   data() {

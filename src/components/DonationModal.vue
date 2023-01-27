@@ -212,6 +212,9 @@ export default {
       const pagedProject = this.projects.find((value, index) => {
         return value.wordpress_page_id == this.wordpress_page_id
       })
+      
+      if (!pagedProject) return;
+
       this.current_donation.project_id = pagedProject.id
       this.current_donation.project = pagedProject
     },
