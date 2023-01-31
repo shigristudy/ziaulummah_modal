@@ -611,7 +611,10 @@ export default {
       localStorage.setItem('synergi-zuf-donations',JSON.stringify(this.donations))
     },
     goCardlesscompleted(res) {
-      console.log(res)
+      if (pay.data.success) {
+        this.initAgain();
+        this.moveForward()
+      }
     },
     async stripePayment(token) {
       this.form.donations = this.donations
