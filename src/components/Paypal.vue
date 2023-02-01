@@ -115,7 +115,7 @@ export default {
 
           },
           onError: (err) => {
-              this.$emit('PaymentFailed', err)
+            this.$emit('PaymentFailed', err)
             console.log(err);
           },
         })

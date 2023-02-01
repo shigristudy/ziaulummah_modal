@@ -83,9 +83,9 @@ export default {
       }
 
       this.error_message = ""
-      if (data?.donation?.id) {
-        this.pusherGocardlessLister(data.donation.id)
-        this.generateGocardlessHostedUrl(data.donation.id)
+      if (data?.monthly_donation) {
+        this.pusherGocardlessLister(data.monthly_donation.id)
+        this.generateGocardlessHostedUrl(data.monthly_donation.id)
       } else {
         console.error('something went Wrong')
       }

@@ -627,8 +627,10 @@ export default {
         payment.amount = { monthly: 0, single: 0 };
         payment.donor = data.donor;
         payment.currency = data.currency;
-        payment.monthly_donations = data.monthly_donations;
-        payment.donation = data.donation;
+        // payment.donation = data.donation;
+        payment.monthly_donation = data.monthly_donation;
+        payment.one_off_donation = data.one_off_donation;
+
         this.donations.map((f) => {
           if (f.monthly) {
             if (f.amount) {
