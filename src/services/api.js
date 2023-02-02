@@ -21,9 +21,9 @@ if (document.getElementById("synergy-donationModal")) {
 
 // Request interceptor
 axios.interceptors.request.use((request) => {
-  request.headers.common["X-Client-ID"] = clientId;
-  request.headers.common["X-Token"] = accessToken;
-  request.headers.common["X-Source-Site"] = website;
+  request.headers["X-Client-ID"] = clientId;
+  request.headers["X-Token"] = accessToken;
+  request.headers["X-Source-Site"] = website;
   return request;
 });
 
