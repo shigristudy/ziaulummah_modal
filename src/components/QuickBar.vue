@@ -4,8 +4,9 @@
             <input
                 v-model="current_donation.amount"
                 type="number"
+                :class="{'outline outline-red' : not_validated}"
                 class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
-                id="other-amount"
+                id="synergy-quick-amount"
                 placeholder="Amount"
             />
 
@@ -41,6 +42,7 @@ export default {
                 totalAmount: null,
                 project: null
             },
+            not_validated:false
         }
     },
     created() {
@@ -54,7 +56,16 @@ export default {
             this.current_donation.project_id = data.id
         },
         handleDonation() {
+            if (!this.validateDonation()) {
+                this.not_validated = true
+                return
+            };
+            this.not_validated = false
             this.$emit("added", this.current_donation);
+        },
+        validateDonation() {
+            if (!this.current_donation.amount || this.current_donation.amount <= 0) return false;
+            return true;
         }
     }
 }

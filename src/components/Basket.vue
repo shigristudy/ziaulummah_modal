@@ -587,6 +587,11 @@ export default {
           this.errors.terms_agreement = "Please Agree Terms and Condition";
           validated = false;
         }
+
+        if (!this.form.payment_type) {
+          this.errors.payment_method = "Please Choose a Payment Method"
+          validated = false
+        }
       }
 
       return validated

@@ -242,6 +242,14 @@ export default {
         this.validated = false;
       }
 
+      console.log(this.current_donation)
+      if (this.current_donation.amount == 0 || !this.current_donation.amount) {
+        if (!this.current_donation.fix_amount) {
+          this.errors.donation_type_id = "Please Enter Amount.";
+          this.validated = false;
+        }
+      }
+
       return this.validated
     },
     $formatAmount(amount) {

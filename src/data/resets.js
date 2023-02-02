@@ -4,7 +4,7 @@ let current_donation = {
     donation_type_id:'',
     amount: null,
     monthly: false,
-    fix_amount: 5,
+    fix_amount: 0,
     qty: 1,
     totalAmount: null,
     project: null
