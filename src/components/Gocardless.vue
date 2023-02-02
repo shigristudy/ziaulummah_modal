@@ -101,6 +101,8 @@ export default {
       channel.bind('gocardless-event', function(data) {
         instance.loading = false;
         instance.paymentCompleted = true
+
+        instance.$emit('completed',data)
       });
     }
   },
