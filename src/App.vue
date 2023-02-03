@@ -86,7 +86,10 @@ function bindSelectorClick() {
     let donation_buttons = document.querySelectorAll(".synergy-btn-show-donation-modal");
     if (donation_buttons) {
       donation_buttons.forEach((element) => {
+        console.log("triggered")
+        console.log(element)
         element.addEventListener("click", () => {
+          console.log("triggered")
           openDonationModal();
         });  
       });
