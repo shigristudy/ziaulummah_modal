@@ -71,9 +71,9 @@ async function getAdminProjects() {
 
 function bindSelectorClick() {
   console.log("here in bind Selector method")
-  if (document.getElementById("donationModal")) {
+  if (document.getElementById("synergy-donationModal")) {
     let selector = document
-      .getElementById("donationModal")
+      .getElementById("synergy-donationModal")
       .getAttribute("data-selector");
     let showBasketButton = document.querySelectorAll(".synergidigital-btn-show-basket");
     console.log("here")
@@ -99,7 +99,7 @@ function bindSelectorClick() {
   }
 }
 function bindProjectSelectorClick() {
-  if (document.getElementById("donationModal")) {
+  if (document.getElementById("synergy-donationModal")) {
     let btnAddToCart = document.querySelector(".synergidigital-btn-add-project-to-cart");
     if (btnAddToCart != null) {
       btnAddToCart.addEventListener("click", (e) => {
