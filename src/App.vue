@@ -48,7 +48,7 @@ onMounted(() => {
   bindQuickBar();
   detectWebsite();
 });
-async function detectWebsite() {
+function detectWebsite() {
   window.addEventListener("load", (event) => {
     const dom = document.documentElement
     (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
