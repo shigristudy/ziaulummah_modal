@@ -70,6 +70,7 @@ async function getAdminProjects() {
 
 
 function bindSelectorClick() {
+  console.log("here in bind Selector method")
   if (document.getElementById("donationModal")) {
     let selector = document
       .getElementById("donationModal")
