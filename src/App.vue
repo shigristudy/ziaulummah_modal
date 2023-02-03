@@ -49,8 +49,8 @@ onMounted(() => {
   detectWebsite();
 });
 function detectWebsite() {
-  window.addEventListener("load", (event) => {
-    const dom = document.documentElement
+  window.addEventListener("load", async (event) => {
+    const dom = await document.documentElement
     (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
   });
 }
