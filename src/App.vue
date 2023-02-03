@@ -76,6 +76,7 @@ function bindSelectorClick() {
       .getElementById("donationModal")
       .getAttribute("data-selector");
     let showBasketButton = document.querySelectorAll(".synergidigital-btn-show-basket");
+    console.log("here")
     if (showBasketButton) {
       showBasketButton.forEach((element) => {
         element.addEventListener("click", () => {
