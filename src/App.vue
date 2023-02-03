@@ -70,13 +70,11 @@ async function getAdminProjects() {
 
 
 function bindSelectorClick() {
-  console.log("here in bind Selector method")
   if (document.getElementById("synergy-donationModal")) {
     let selector = document
       .getElementById("synergy-donationModal")
       .getAttribute("data-selector");
     let showBasketButton = document.querySelectorAll(".synergidigital-btn-show-basket");
-    console.log("here")
     if (showBasketButton) {
       showBasketButton.forEach((element) => {
         element.addEventListener("click", () => {
@@ -88,10 +86,7 @@ function bindSelectorClick() {
     let donation_buttons = document.querySelectorAll(".synergy-btn-show-donation-modal");
     if (donation_buttons) {
       donation_buttons.forEach((element) => {
-        console.log("triggered")
-        console.log(element)
         element.addEventListener("click", () => {
-          console.log("triggered")
           openDonationModal();
         });  
       });
@@ -108,7 +103,6 @@ function bindProjectSelectorClick() {
         let project_id = parseInt(e.target.getAttribute('data-project-id'))
         let amount = parseFloat(e.target.getAttribute('data-amount'))
         let monthly = parseInt(e.target.getAttribute('data-monthly'))
-        console.log(category_id,project_id,amount,monthly)
         
         getProjectDetails(category_id,project_id,amount,monthly)
       });
@@ -205,7 +199,7 @@ function assets(asset) {
 }
 
 function donationAdded(donation) {
-  console.log(donation)
+  // console.log(donation)
 
   if (state.selectedItem == null) {
     state.donations = [...state.donations, { ...donation }];
