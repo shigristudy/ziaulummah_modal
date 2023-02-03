@@ -39,6 +39,7 @@ let state = reactive({
 });
 const donationComponentRef = ref(null)
 onMounted(() => {
+  detectWebsite();
   getGateways();
   // getProjects();
   // getAdminProjects()
@@ -46,7 +47,12 @@ onMounted(() => {
   bindProjectSelectorClick();
 
   bindQuickBar();
+  
 });
+async function detectWebsite() {
+  const dom = document.documentElement
+  (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
+}
 
 async function bindQuickBar() {
 

@@ -14,7 +14,7 @@
               <div class="mt-2">
                 <label for="select-currency">Select Currency</label>
                 <select v-model="form.selected_currency"
-                  class="ml-2 mt-1 form-select text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none" name="currency" id="select-currency">
+                  class="ml-2 mt-1 form-select text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green dark:focus:border-black focus:outline-none" name="currency" id="select-currency">
                   <option value="GBP">GBP</option>
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -26,7 +26,7 @@
 
         <div class="border-t border-gray-200 py-6 px-4 sm:px-10" v-if="projects">
           <!-- <div class="mb-4">
-            <label for="select-category" class=" text-green font-bold block mb-2 text-lg">Select Category</label>
+            <label for="select-category" class=" text-green dark:text-black font-bold block mb-2 text-lg">Select Category</label>
             <select
               id="select-category"
               v-model="current_donation.category_id"
@@ -40,7 +40,7 @@
           </div> -->
 
           <div class="mb-4">
-            <label for="select-project" class=" text-green font-bold block mb-2 text-lg">Select Project</label>
+            <label for="select-project" class=" text-green dark:text-black font-bold block mb-2 text-lg">Select Project</label>
             <select
               id="select-project"
               v-model="current_donation.project_id"
@@ -53,7 +53,7 @@
           </div>
 
           <div class="mb-4" v-if="donation_types && donation_types.donation_types">
-            <label for="select-donation-type" class=" text-green font-bold block mb-2 text-lg">Select Donation Type</label>
+            <label for="select-donation-type" class=" text-green dark:text-black font-bold block mb-2 text-lg">Select Donation Type</label>
             <select
               @change="addDonationType"
               id="select-donation-type"
@@ -68,22 +68,22 @@
 
           
           <div class="mb-4">
-            <label for="" class=" text-green font-bold block mb-2 text-lg">Frequency</label>
+            <label for="" class=" text-green dark:text-black font-bold block mb-2 text-lg">Frequency</label>
             <ul class="flex gap-2">
               <li class="relative" v-for="(frequency,index) in frequencies" :key="index">
                 <input class="sr-only peer" type="radio" v-model="current_donation.monthly" name="frequency" :value="frequency.selected" :id="'frequency_'+index">
-                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green peer-checked:ring-2 peer-checked:border-transparent" :for="'frequency_'+index">{{ frequency.name }}</label>
+                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green dark:peer-checked:ring-black peer-checked:ring-2 peer-checked:border-transparent" :for="'frequency_'+index">{{ frequency.name }}</label>
                 <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
               </li>
             </ul>
           </div>
           
           <div class="mb-4" v-if="current_donation.project && current_donation.project.fix_amounts">
-            <label for="select-amounts" class=" text-green font-bold block mb-2 text-lg" >Donation amount</label>
+            <label for="select-amounts" class=" text-green dark:text-black font-bold block mb-2 text-lg" >Donation amount</label>
             <ul class="flex gap-2">
               <li class="relative" v-for="(amount,index) in current_donation.project.fix_amounts.split(',')" :key="index">
                 <input class="sr-only peer" type="radio" v-model="current_donation.fix_amount" :value="parseFloat(amount)" name="amount" :id="'amount_'+amount">
-                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green peer-checked:ring-2 peer-checked:border-transparent" :for="'amount_'+amount">{{ $formatAmount(amount) }}</label>
+                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green dark:peer-checked:ring-black peer-checked:ring-2 peer-checked:border-transparent" :for="'amount_'+amount">{{ $formatAmount(amount) }}</label>
                 <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
               </li>
             </ul>
@@ -92,7 +92,7 @@
           <div class="mb-4">
             <label
               for="other-amount"
-              class="form-label inline-block mb-2 text-green font-bold"
+              class="form-label inline-block mb-2 text-green dark:text-black font-bold"
               >Other Amount</label
             >
             <input
@@ -107,7 +107,7 @@
           <div class="mb-4">
             <button 
               @click="addDonation"
-              type="button" class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+              type="button" class="px-6 pt-2.5 pb-2 bg-red dark:bg-black text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-gray-700 hover:shadow-lg focus:bg-green dark:focus:bg-gray-800 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green dark:active:bg-black active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
               Add Donation
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 ml-3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

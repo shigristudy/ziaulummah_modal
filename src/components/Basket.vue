@@ -18,13 +18,13 @@
                 <template v-for="(donation,index) in donations"  :key="'donation_' + index">
                   <li 
                     v-if="donation.project"
-                    class="flex py-4 px-2 !border-2 !border-green mb-2 bg-white">
+                    class="flex py-4 px-2 !border-2 !border-green dark:!border-black mb-2 bg-white">
                     <div class="flex flex-1 flex-col">
                       <div>
                         <div
                           class="flex justify-between text-base font-bold text-gray-900"
                         >
-                          <h3 class="text-green text-lg">{{ donation.project.title }}</h3>
+                          <h3 class="text-green dark:text-black text-lg">{{ donation.project.title }}</h3>
                           <p class="ml-4 text-lg">{{ $formatAmount((donation.amount) ? donation.amount : donation.fix_amount) }}</p>
                         </div>
                         <p class="mt-1 text-sm text-gray-700">{{ donationType(donation.project,donation.donation_type_id) }}</p>
@@ -63,8 +63,8 @@
         </div>
         <div class="mb-4 px-4 sm:px-6">
           <ul class="flex gap-2">
-            <li class="relative w-1/2 flex flex-col justify-center items-center !border-2 !border-green p-4 bg-white">
-              <h2 class="font-bold text-lg text-green mb-1">Paper copy of reciept</h2>
+            <li class="relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
+              <h2 class="font-bold text-lg text-green dark:text-black mb-1">Paper copy of reciept</h2>
               <input type="hidden" :value="paper_copy_amount">
               <p class="font-bold text-lg mb-1">{{ $formatAmount(paper_copy_amount) }}</p>
               <input class="sr-only peer" type="checkbox" v-model="isSelectedPaperCopy" id="admin_fee_cover" @change="addCustomProject('paper_copy')">
@@ -86,8 +86,8 @@
               <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
             </li>
   
-            <li class="relative w-1/2 flex flex-col justify-center items-center !border-2 !border-green p-4 bg-white">
-              <h2 class="font-bold text-lg text-green mb-1">Admin Fee Cover</h2>
+            <li class="relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
+              <h2 class="font-bold text-lg text-green dark:text-black mb-1">Admin Fee Cover</h2>
               <input type="hidden" :value="admin_fee_amount" >
               <p class="font-bold text-lg mb-1">{{ $formatAmount(admin_fee_amount) }}</p>
               <input class="sr-only peer" type="checkbox" v-model="isAdminFeeSelected" id="paper_copy" @change="addCustomProject('admin_fee')">
@@ -134,7 +134,7 @@
             <p>{{ $formatAmount(totalMonthlyDonationThereAfter) }}</p>
           </div>
           <div class="mt-6 flex justify-between">
-            <button :disabled="!donations.length" type="button" @click="makeAnother()" class="bg-green px-6 pt-2.5 pb-2 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+            <button :disabled="!donations.length" type="button" @click="makeAnother()" class="bg-green dark:bg-black px-6 pt-2.5 pb-2 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-black hover:shadow-lg focus:bg-green dark:focus:bg-black focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green dark:active:bg-black active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 mr-3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
@@ -144,7 +144,7 @@
             <button :disabled="!donations.length" type="button" @click="moveForward()" :class="{
               'bg-gray-400 cursor-not-allowed hover:bg-gray-400' : !donations.length,
               'bg-red' : donations.length
-            }" class="px-6 pt-2.5 pb-2 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+            }" class="px-6 pt-2.5 pb-2 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-black hover:shadow-lg focus:bg-green dark:focus:bg-black focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green dark:active:bg-black active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
                 Proceed to Checkout
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 ml-3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -392,14 +392,14 @@
           <li class="text-red" v-for="(error,index) in errors" :key="'error'+index">{{ error }}</li>
         </ul>
         <div class="my-6 flex justify-between">
-            <button type="button" @click="moveBack()" class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+            <button type="button" @click="moveBack()" class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-black hover:shadow-lg focus:bg-green dark:focus:bg-black focus:shadow-lg focus:outline-none focus:ring-0 dark:active:bg-black active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 mr-3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 9l-3 3m0 0l3 3m-3-3h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Back
 
             </button>
-            <button type="button" @click="moveForward()" class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+            <button type="button" @click="moveForward()" class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-black hover:shadow-lg focus:bg-green dark:focus:bg-black focus:shadow-lg focus:outline-none focus:ring-0 dark:active:bg-black active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
               Proceed to Payment
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 ml-3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -472,7 +472,7 @@
           </div>
         </div>
         <div class="flex justify-center">
-          <button type="button" @click="makeAnother()" class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+          <button type="button" @click="makeAnother()" class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-black hover:shadow-lg focus:bg-green dark:focus:bg-black focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green dark:active:bg-black active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
             Make Another Donation
           </button>
         </div>
