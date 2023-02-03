@@ -134,7 +134,7 @@
             <p>{{ $formatAmount(totalMonthlyDonationThereAfter) }}</p>
           </div>
           <div class="mt-6 flex justify-between">
-            <button :disabled="!donations.length" type="button" @click="makeAnother()" class="bg-green dark:bg-black px-6 pt-2.5 pb-2 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-black hover:shadow-lg focus:bg-green dark:focus:bg-black focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green dark:active:bg-black active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
+            <button type="button" @click="makeAnother()" class="bg-green dark:bg-black px-6 pt-2.5 pb-2 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green dark:hover:bg-black hover:shadow-lg focus:bg-green dark:focus:bg-black focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green dark:active:bg-black active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 mr-3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
@@ -533,6 +533,7 @@ export default {
       return (p_gateway.is_enabled == 1) ? true : false
     },
     makeAnother() {
+      console.log("here")
       this.step = 1
       this.$emit('addAnotherDonation')
     },
