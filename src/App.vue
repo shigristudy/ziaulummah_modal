@@ -241,6 +241,11 @@ function addAnotherDonation() {
   state.isCartOpened = false
   state.isAddDonationOpened = true
 }
+
+function viewBasket() {
+  state.isCartOpened = true
+  state.isAddDonationOpened = false
+}
 </script>
   
 <template>
@@ -266,6 +271,7 @@ function addAnotherDonation() {
       <DonationModal 
       ref="donationComponentRef"
       :form="state.form" 
+      @viewBasket="viewBasket"
       :currencies="state.currencies"
       @added="donationAdded"/>
     </VueSidePanel>

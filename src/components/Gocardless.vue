@@ -6,7 +6,7 @@
     <p class="text-red my-3" v-if="error_message">
       Error: {{ error_message }}
     </p>
-    <h1 v-if="!loading && !paymentCompleted">You Will Be Redirected to Gocardless Payment Page and After Process Redirect Back to Our Website.</h1>
+    <h1 v-if="!loading && !paymentCompleted" class="mt-4">You will be redirected to GoCardless, our Direct Debit provider. Once you have completed the setup, you will be redirected back to our website.</h1>
     <div v-if="loading" class="bg-green flex items-center justify-center flex-col">
       <h1 class="text-white font-bold p-6">
         Waiting for Payment Process ....  
@@ -30,7 +30,7 @@
         :disabled="loading"
         @click="saveDonation()"
         type="button" class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
-        Donate with Gocardless
+        Setup Direct Debit
         <svg v-if="!loading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 ml-3">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>

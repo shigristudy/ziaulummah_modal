@@ -43,7 +43,7 @@
                           <button
                             @click="removeItem(index)"
                             type="button"
-                            class="font-medium text-red border-none p-0"
+                            class="font-medium text-red hover:bg-transparent border-none p-0"
                           >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -64,14 +64,14 @@
         <div class="mb-4 px-4 sm:px-6">
           <ul class="flex gap-2">
             <li class="relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
-              <h2 class="font-bold text-lg text-green dark:text-black mb-1">Paper copy of reciept</h2>
+              <h2 class="font-bold text-lg text-green dark:text-black mb-1">Paper Copy of Receipt</h2>
               <input type="hidden" :value="paper_copy_amount">
               <p class="font-bold text-lg mb-1">{{ $formatAmount(paper_copy_amount) }}</p>
               <input class="sr-only peer" type="checkbox" v-model="isSelectedPaperCopy" id="admin_fee_cover" @change="addCustomProject('paper_copy')">
               <label for="admin_fee_cover" 
                 :class="{
                   'bg-red': isSelectedPaperCopy,
-                  'bg-gray-400': !isSelectedPaperCopy
+                  'bg-gray-600 hover:bg-red dark:hover:bg-black': !isSelectedPaperCopy
                 }"
                 class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md transition duration-300 ease-in-out flex align-center items-center peer-checked:ring-green peer-checked:ring-2 peer-checked:border-transparent">
                 {{ (isSelectedPaperCopy) ? 'Selected' : 'Not Selected' }}
@@ -94,7 +94,7 @@
               <label for="paper_copy" 
                 :class="{
                   'bg-red': isAdminFeeSelected,
-                  'bg-gray-400': !isAdminFeeSelected
+                  'bg-gray-600 hover:bg-red dark:hover:bg-black': !isAdminFeeSelected
                 }"
                 class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md transition duration-300 ease-in-out flex align-center items-center peer-checked:ring-green peer-checked:ring-2 peer-checked:border-transparent">
                 {{ (isAdminFeeSelected) ? 'Selected' : 'Not Selected' }}
@@ -238,7 +238,7 @@
         />
         <textarea
           class="mb-2 form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
-          placeholder="Notes (On Behalf of )"
+          placeholder="Notes (On behalf of)"
           v-model="form.notes"
           rows="3"
         ></textarea>
@@ -252,8 +252,7 @@
               </p>
               <p class="text-gray-500 mb-2">
                 With Gift Aid, your donation of {{ $formatAmount(50.00) }} would be worth {{ $formatAmount(62.50) }}
-                at no <br />
-                extra cost to you.
+                at no extra cost to you.
               </p>
             </div>
             <div class="w-1/4">
@@ -278,7 +277,7 @@
               :value="1"
             />
             <label for="agreed" class="ml-1"
-              >I Agree, I would like to boost my donation with Gift Aid
+              >I agree, I would like to boost my donation with Gift Aid
             </label>
           </div>
         </div>
@@ -321,7 +320,7 @@
             :value="1"
           />
           <label for="synergidigital-accept-terms-business" class="ml-1">
-            By checking this box, you are agreeing to our terms of service
+            By checking this box, you are agreeing to our <a target="__blank" :href="policyLink" class=" text-red">terms of service</a>
           </label>
         </div>
         <hr>
@@ -342,7 +341,7 @@
                 class="flex gap-1 items-center"
               >
                 <IconCreditCard />
-                Credit Card</label
+                Credit/Debit Card</label
               >
             </div>
             
@@ -382,7 +381,7 @@
                 class="flex gap-1 items-center"
               >
                 <IconCreditCard />
-                Gocardless</label
+                Direct Debit</label
               >
             </div>
 
@@ -415,7 +414,7 @@
               <h2 class="text-2xl font-bold text-gray-900 w-full" id="slide-over-title">
                 Your Donation
               </h2>
-              <p>Please Fill Payment Informations</p> 
+              <p>Please complete the donation process</p> 
             </div>
           </div>
         </div>
@@ -467,7 +466,7 @@
               <h2 class="text-2xl font-bold text-gray-900 w-full flex justify-center" id="slide-over-title">
                 <IconCheck />
               </h2>
-              <strong>Jazakallah Khair</strong> 
+              <h1>Your donation was successful!</h1> 
             </div>
           </div>
         </div>
@@ -516,7 +515,11 @@ export default {
       admin_fee_amount: 5,
       // donationTotal:0,
       // totalDonation: 0,
+      policyLink:''
     }
+  },
+  mounted() {
+    this.policyLink = (window.location.host == 'musafir.org.uk') ? 'https://www.musafir.org.uk/policies/' : 'https://www.ziaulummahfoundation.org.uk/policies/'
   },
   methods: {
     getGatewayPublicKey(gateway) {

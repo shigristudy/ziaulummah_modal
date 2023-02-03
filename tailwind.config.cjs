@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  // important: "#synergy-donation-tailwind",
   important:true,
   // prefix: 'tw-',
   content: [
