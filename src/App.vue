@@ -51,7 +51,7 @@ onMounted(() => {
 async function detectWebsite() {
   console.log("here")
   const dom = document.documentElement
-  // (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
+  (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
   // window.addEventListener('DOMContentLoaded', (event) => {
   // });
 }
