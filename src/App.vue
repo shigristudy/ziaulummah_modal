@@ -49,11 +49,11 @@ onMounted(() => {
   detectWebsite();
 });
 async function detectWebsite() {
-  window.addEventListener('DOMContentLoaded', (event) => {
-    console.log("here")
-    const dom = document.documentElement
-    (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
-  });
+  console.log("here")
+  const dom = document.documentElement
+  // (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
+  // window.addEventListener('DOMContentLoaded', (event) => {
+  // });
 }
 
 async function bindQuickBar() {
