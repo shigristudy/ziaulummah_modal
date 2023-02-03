@@ -39,7 +39,6 @@ let state = reactive({
 });
 const donationComponentRef = ref(null)
 onMounted(() => {
-  detectWebsite();
   getGateways();
   // getProjects();
   // getAdminProjects()
@@ -47,7 +46,7 @@ onMounted(() => {
   bindProjectSelectorClick();
 
   bindQuickBar();
-  
+  detectWebsite();
 });
 async function detectWebsite() {
   window.addEventListener('DOMContentLoaded', (event) => {
