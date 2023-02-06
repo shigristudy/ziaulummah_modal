@@ -45,10 +45,8 @@ onMounted(() => {
   bindSelectorClick();
   bindProjectSelectorClick();
 
-  document.addEventListener("DOMContentLoaded", function () {
-    console.log("loaded")
-    bindQuickBar();
-  });
+  
+  bindQuickBar();
   detectWebsite();
 });
 function detectWebsite() {
@@ -60,25 +58,29 @@ function detectWebsite() {
   });
 }
 
-async function bindQuickBar() {
-  console.log("loaded in")
-  let quickbarElements = document.querySelectorAll(".synergidigital-quick-donation");
-  console.log(quickbarElements)
-  if (quickbarElements) {
-    quickbarElements.forEach((element) => {
-      createApp(QuickBar, {
-        onAdded(donation) {
-          donationAdded(donation)
+function bindQuickBar() {
+  console.log("loaded 1")
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("loaded")
+    let quickbarElements = document.querySelectorAll(".synergidigital-quick-donation");
+    console.log(quickbarElements)
+    if (quickbarElements) {
+      quickbarElements.forEach((element) => {
+        createApp(QuickBar, {
+          onAdded(donation) {
+            donationAdded(donation)
 
-          document.getElementById("synergidigital-snackbar").classList.remove('hidden')
-          setTimeout(function () {
-            document.getElementById("synergidigital-snackbar").classList.add('hidden')
-          }, 2000);
-        }
+            document.getElementById("synergidigital-snackbar").classList.remove('hidden')
+            setTimeout(function () {
+              document.getElementById("synergidigital-snackbar").classList.add('hidden')
+            }, 2000);
+          }
 
-      }).mount(element)
-    })
-  }
+        }).mount(element)
+      })
+    }
+  });
+  
   // const quickbar = 
 }
 
