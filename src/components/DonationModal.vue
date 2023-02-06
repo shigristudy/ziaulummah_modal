@@ -279,3 +279,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+[type=button], [type=submit], button {
+  border: unset !important;
+}
+
+</style>

@@ -18,7 +18,7 @@
                 <template v-for="(donation,index) in donations"  :key="'donation_' + index">
                   <li 
                     v-if="donation.project"
-                    class="flex py-4 px-2 !border-2 !border-green dark:!border-black mb-2 bg-white">
+                    class="basket-cards-list flex py-4 px-2 !border-2 !border-green dark:!border-black mb-2 bg-white">
                     <div class="flex flex-1 flex-col">
                       <div>
                         <div
@@ -746,5 +746,9 @@ export default {
 <style scoped>
 [type=button], [type=submit], button {
   border: unset !important;
+}
+
+li.basket-cards-list{
+  border: 1px solid !important;
 }
 </style>
