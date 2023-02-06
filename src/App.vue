@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, ref, computed ,createApp} from "vue";
+import { reactive, onMounted, ref, computed ,createApp ,nextTick} from "vue";
 import Api from "./services/api";
 import countries from "./data/countries.json";
 import Basket from "./components/Basket.vue";
@@ -45,8 +45,9 @@ onMounted(() => {
   bindSelectorClick();
   bindProjectSelectorClick();
 
-  
-  bindQuickBar();
+  nextTick(function () { 
+    bindQuickBar();
+  })
   detectWebsite();
 });
 function detectWebsite() {
@@ -59,9 +60,7 @@ function detectWebsite() {
 }
 
 function bindQuickBar() {
-  console.log("loaded 1")
-  document.addEventListener("DOMContentLoaded", function () {
-    console.log("loaded")
+  
     let quickbarElements = document.querySelectorAll(".synergidigital-quick-donation");
     console.log(quickbarElements)
     if (quickbarElements) {
@@ -79,7 +78,6 @@ function bindQuickBar() {
         }).mount(element)
       })
     }
-  });
   
   // const quickbar = 
 }
