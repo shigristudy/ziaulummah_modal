@@ -59,17 +59,23 @@ function detectWebsite() {
 
 async function bindQuickBar() {
 
-  const quickbar = createApp(QuickBar, {
-    onAdded(donation) {
-      donationAdded(donation)
+  let showBasketButton = document.querySelectorAll(".synergidigital-quick-donation");
+  if (showBasketButton) {
+    showBasketButton.forEach((element) => {
+      createApp(QuickBar, {
+        onAdded(donation) {
+          donationAdded(donation)
 
-      document.getElementById("synergidigital-snackbar").classList.remove('hidden')
-      setTimeout(function () {
-        document.getElementById("synergidigital-snackbar").classList.add('hidden')
-      }, 2000);
-    }
+          document.getElementById("synergidigital-snackbar").classList.remove('hidden')
+          setTimeout(function () {
+            document.getElementById("synergidigital-snackbar").classList.add('hidden')
+          }, 2000);
+        }
 
-  }).mount('#synergidigital-quick-donation')
+      }).mount(element)
+    })
+  }
+  // const quickbar = 
 }
 
 async function getAdminProjects() {
