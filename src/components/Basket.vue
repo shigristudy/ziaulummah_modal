@@ -63,7 +63,7 @@
         </div>
         <div class="mb-4 px-4 sm:px-6">
           <ul class="flex gap-2">
-            <li class="relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
+            <li class="basket-cards-list relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
               <h2 class="font-bold text-lg text-green dark:text-black mb-1">Paper Copy of Receipt</h2>
               <input type="hidden" :value="paper_copy_amount">
               <p class="font-bold text-lg mb-1">{{ $formatAmount(paper_copy_amount) }}</p>
@@ -86,7 +86,7 @@
               <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
             </li>
   
-            <li class="relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
+            <li class="basket-cards-list relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
               <h2 class="font-bold text-lg text-green dark:text-black mb-1">Admin Fee Cover</h2>
               <input type="hidden" :value="admin_fee_amount" >
               <p class="font-bold text-lg mb-1">{{ $formatAmount(admin_fee_amount) }}</p>
