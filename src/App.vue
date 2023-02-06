@@ -241,10 +241,10 @@ function toggleCustomProject(type, selected) {
 }
 
 function updateMiniCart(amount) {
-  let minicart = document.getElementById("synergy-mini-cart-label");
-  if (minicart) {
-    minicart.innerText = state.currencies[state.form.selected_currency] + parseFloat(amount).toFixed(2);
-  }
+  let minicarts = document.querySelectorAll(".synergy-mini-cart-label");
+  minicarts.forEach((element) => { 
+    element.innerText = state.currencies[state.form.selected_currency] + parseFloat(amount).toFixed(2);
+  })
 }
 
 function addAnotherDonation() {
