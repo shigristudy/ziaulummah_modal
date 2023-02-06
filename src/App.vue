@@ -45,7 +45,8 @@ onMounted(() => {
   bindSelectorClick();
   bindProjectSelectorClick();
 
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("loaded")
     bindQuickBar();
   });
   detectWebsite();
@@ -60,10 +61,11 @@ function detectWebsite() {
 }
 
 async function bindQuickBar() {
-
-  let showBasketButton = document.querySelectorAll(".synergidigital-quick-donation");
-  if (showBasketButton) {
-    showBasketButton.forEach((element) => {
+  console.log("loaded in")
+  let quickbarElements = document.querySelectorAll(".synergidigital-quick-donation");
+  console.log(quickbarElements)
+  if (quickbarElements) {
+    quickbarElements.forEach((element) => {
       createApp(QuickBar, {
         onAdded(donation) {
           donationAdded(donation)
