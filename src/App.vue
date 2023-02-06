@@ -45,7 +45,9 @@ onMounted(() => {
   bindSelectorClick();
   bindProjectSelectorClick();
 
-  bindQuickBar();
+  document.addEventListener("DOMContentLoaded", function() {
+    bindQuickBar();
+  });
   detectWebsite();
 });
 function detectWebsite() {
