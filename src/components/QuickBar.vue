@@ -62,6 +62,9 @@ export default {
             };
             this.not_validated = false
             this.$emit("added", this.current_donation);
+
+            this.current_donation.amount = null
+            this.current_donation.monthly = false
         },
         validateDonation() {
             if (!this.current_donation.amount || this.current_donation.amount <= 0) return false;
