@@ -73,6 +73,9 @@ function bindQuickBar() {
             setTimeout(function () {
               document.getElementById("synergidigital-snackbar").classList.add('hidden')
             }, 2000);
+
+            // Open Basket
+            viewBasket()
           }
 
         }).mount(element)
