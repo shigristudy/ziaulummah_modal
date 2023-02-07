@@ -56,7 +56,7 @@
       </div>
 
       <div>
-        <p class="bg-red" v-if="stripeError">
+        <p class="text-red" v-if="stripeError">
           {{ stripeError }}
         </p>
       </div>
