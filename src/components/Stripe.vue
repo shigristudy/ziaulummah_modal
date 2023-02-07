@@ -1,12 +1,6 @@
 <template>
   <div>
     <form>
-      <div>
-        <p class="stripe__error" v-if="stripeError">
-          {{ stripeError }}
-        </p>
-      </div>
-
       <div class="stripe">
         <label for="Card Number" class="stripe__label"> Card Number </label>
         <div>
@@ -60,6 +54,12 @@
           </svg>
         </button>
       </div>
+
+      <div>
+        <p class="bg-red" v-if="stripeError">
+          {{ stripeError }}
+        </p>
+      </div>
     </form>
   </div>
 </template>
@@ -98,7 +98,6 @@ export default {
 
   methods: {
     moveBack() {
-      console.log("moveBack")
       this.$emit('moveBack')
     },
     setUpStripe() {
@@ -143,6 +142,7 @@ export default {
       if (event.error) {
         this.stripeError = event.error.message;
         this.error = true
+        this.loading = false
       } else {
         this.stripeError = "";
       }
