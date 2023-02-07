@@ -41,6 +41,7 @@
         </button>
         <button 
           @click.prevent="submitFormToCreateToken()"
+          :disabled="loading"
           type="button" class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
           Donate
           <svg v-if="!loading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 ml-3">
@@ -183,6 +184,7 @@ export default {
        }).then(async (result) => {
         if (result.error) {
           this.stripeError = result.error.message;
+          this.loading = false
         } else {
           const token = result.token.id;
           this.$emit("stripePayment", token);
