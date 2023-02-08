@@ -191,6 +191,8 @@ function initAgain() {
   localStorage.removeItem('synergi-zuf-donations')
   state.donations = [];
   state.form = { ...form }
+
+  window.location.href = window.location.href = "/success";
 }
 
 function showSuccessPage() {

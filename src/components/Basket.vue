@@ -535,7 +535,6 @@ export default {
       return (p_gateway.is_enabled == 1) ? true : false
     },
     makeAnother() {
-      console.log("here")
       this.step = 1
       this.$emit('addAnotherDonation')
     },
