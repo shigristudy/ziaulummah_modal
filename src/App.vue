@@ -268,7 +268,7 @@ function viewBasket() {
       <p class="px-3">Donation Added to Basket</p>
     </div>
 
-    <VueSidePanel v-model="state.isCartOpened" lock-scroll class="md:w-1/3 w-full bg-gray-100">
+    <VueSidePanel v-model="state.isCartOpened" class="md:w-1/3 w-full bg-gray-100">
       <Basket :donations="state.donations" 
             :form="state.form" 
             :currencies="state.currencies" 
@@ -280,7 +280,7 @@ function viewBasket() {
             @totalAmount="updateMiniCart"
             @removeItem="removeItem"/>
     </VueSidePanel>
-    <VueSidePanel v-model="state.isAddDonationOpened" lock-scroll class="md:w-1/3 w-full bg-gray-100">
+    <VueSidePanel v-model="state.isAddDonationOpened" class="md:w-1/3 w-full bg-gray-100">
       <DonationModal 
       ref="donationComponentRef"
       :form="state.form" 

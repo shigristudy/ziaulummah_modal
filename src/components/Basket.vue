@@ -269,7 +269,7 @@
               programmes.
             </p>
           </div>
-          <div class="mb-2 flex">
+          <div class="mb-2 flex gap-1">
             <input
               id="agreed"
               type="checkbox"
