@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, ref, computed ,createApp ,nextTick} from "vue";
+import { reactive, onMounted, ref, computed, createApp, nextTick } from "vue";
 import Api from "./services/api";
 import countries from "./data/countries.json";
 import Basket from "./components/Basket.vue";
@@ -23,21 +23,21 @@ let state = reactive({
   projects: [],
   locations: [],
   donationTypes: [],
-  donations: JSON.parse(localStorage.getItem('synergi-zuf-donations')) ?? [],
+  donations: JSON.parse(localStorage.getItem("synergi-zuf-donations")) ?? [],
   countries,
   totalAmount: 0,
   current_donation: { ...current_donation },
   form: { ...form },
-  stripePublicKey: '',
-  gateways:[],
+  stripePublicKey: "",
+  gateways: [],
   totalDonation: 0,
   donationTotal: 0,
   adminProjects: [],
   quickDonation: {},
-  currencies: {"GBP": "£", "USD": "$", "EUR": "€"},
-  selected_currency: 'GBP'
+  currencies: { GBP: "£", USD: "$", EUR: "€" },
+  selected_currency: "GBP",
 });
-const donationComponentRef = ref(null)
+const donationComponentRef = ref(null);
 onMounted(() => {
   getGateways();
   // getProjects();
@@ -45,119 +45,127 @@ onMounted(() => {
   bindSelectorClick();
   bindProjectSelectorClick();
 
-  nextTick(function () { 
+  nextTick(function () {
     bindQuickBar();
-  })
+  });
   detectWebsite();
 });
 function detectWebsite() {
   window.addEventListener("load", (event) => {
-    const dom = document.getElementsByTagName('html')[0]
+    const dom = document.getElementsByTagName("html")[0];
     if (dom) {
-      (window.location.host == 'musafir.org.uk') ? dom.classList.add('dark') : dom.classList.remove('dark')
+      window.location.host == "musafir.org.uk"
+        ? dom.classList.add("dark")
+        : dom.classList.remove("dark");
     }
   });
 }
 
 function bindQuickBar() {
-  
-    let quickbarElements = document.querySelectorAll(".synergidigital-quick-donation");
-    console.log(quickbarElements)
-    if (quickbarElements) {
-      quickbarElements.forEach((element) => {
-        createApp(QuickBar, {
-          onAdded(donation) {
-            donationAdded(donation)
+  let quickbarElements = document.querySelectorAll(
+    ".synergidigital-quick-donation"
+  );
+  console.log(quickbarElements);
+  if (quickbarElements) {
+    quickbarElements.forEach((element) => {
+      createApp(QuickBar, {
+        onAdded(donation) {
+          donationAdded(donation);
 
-            document.getElementById("synergidigital-snackbar").classList.remove('hidden')
-            setTimeout(function () {
-              document.getElementById("synergidigital-snackbar").classList.add('hidden')
-            }, 2000);
+          document
+            .getElementById("synergidigital-snackbar")
+            .classList.remove("hidden");
+          setTimeout(function () {
+            document
+              .getElementById("synergidigital-snackbar")
+              .classList.add("hidden");
+          }, 2000);
 
-            // Open Basket
-            viewBasket()
-          }
+          // Open Basket
+          viewBasket();
+        },
+      }).mount(element);
+    });
+  }
 
-        }).mount(element)
-      })
-    }
-  
-  // const quickbar = 
+  // const quickbar =
 }
 
 async function getAdminProjects() {
   let { data } = await Api.fetchAdminProjects();
-  state.adminProjects = data
+  state.adminProjects = data;
 }
-
 
 function bindSelectorClick() {
   if (document.getElementById("synergy-donationModal")) {
     let selector = document
       .getElementById("synergy-donationModal")
       .getAttribute("data-selector");
-    let showBasketButton = document.querySelectorAll(".synergidigital-btn-show-basket");
+    let showBasketButton = document.querySelectorAll(
+      ".synergidigital-btn-show-basket"
+    );
     if (showBasketButton) {
       showBasketButton.forEach((element) => {
         element.addEventListener("click", () => {
           openModel();
-        })
-      })
+        });
+      });
     }
 
-    let donation_buttons = document.querySelectorAll(".synergy-btn-show-donation-modal");
+    let donation_buttons = document.querySelectorAll(
+      ".synergy-btn-show-donation-modal"
+    );
     if (donation_buttons) {
       donation_buttons.forEach((element) => {
         element.addEventListener("click", () => {
           openDonationModal();
-        });  
+        });
       });
     }
   }
 }
 function bindProjectSelectorClick() {
   if (document.getElementById("synergy-donationModal")) {
-    let btnAddToCart = document.querySelector(".synergidigital-btn-add-project-to-cart");
+    let btnAddToCart = document.querySelector(
+      ".synergidigital-btn-add-project-to-cart"
+    );
     if (btnAddToCart != null) {
       btnAddToCart.addEventListener("click", (e) => {
+        let category_id = parseInt(e.target.getAttribute("data-category-id"));
+        let project_id = parseInt(e.target.getAttribute("data-project-id"));
+        let amount = parseFloat(e.target.getAttribute("data-amount"));
+        let monthly = parseInt(e.target.getAttribute("data-monthly"));
 
-        let category_id = parseInt(e.target.getAttribute('data-category-id'))
-        let project_id = parseInt(e.target.getAttribute('data-project-id'))
-        let amount = parseFloat(e.target.getAttribute('data-amount'))
-        let monthly = parseInt(e.target.getAttribute('data-monthly'))
-        
-        getProjectDetails(category_id,project_id,amount,monthly)
+        getProjectDetails(category_id, project_id, amount, monthly);
       });
     }
   }
 }
 
-async function getProjectDetails(category_id,project_id,amount,monthly) {
-  const { data } = await Api.fetchProject(project_id)
+async function getProjectDetails(category_id, project_id, amount, monthly) {
+  const { data } = await Api.fetchProject(project_id);
   let quick_donation = {
-      category_id: category_id,
-      project_id: project_id,
-      donation_type_id: data.donation_types[0].id,
-      amount: amount,
-      monthly: monthly,
-      fix_amount: 0,
-      qty: 1,
-      totalAmount: null,
-      project: data
-  }
+    category_id: category_id,
+    project_id: project_id,
+    donation_type_id: data.donation_types[0].id,
+    amount: amount,
+    monthly: monthly,
+    fix_amount: 0,
+    qty: 1,
+    totalAmount: null,
+    project: data,
+  };
 
-  donationAdded(quick_donation)
-  document.getElementById("synergidigital-snackbar").classList.remove('hidden')
+  donationAdded(quick_donation);
+  document.getElementById("synergidigital-snackbar").classList.remove("hidden");
   setTimeout(function () {
-    document.getElementById("synergidigital-snackbar").classList.add('hidden')
+    document.getElementById("synergidigital-snackbar").classList.add("hidden");
   }, 2000);
-
-} 
+}
 
 const hasMonthly = computed(() => {
   return state.donations.some((d) => d.monthly);
 });
-
 
 function addDonation() {
   if (validateDonation()) {
@@ -187,12 +195,21 @@ function editItem(index) {
   state.step = 1;
 }
 
-function initAgain() {
-  localStorage.removeItem('synergi-zuf-donations')
+function initAgain(totalAmount) {
+  const params = new URLSearchParams({
+    first_name: state.form.first_name,
+    last_name: state.form.last_name,
+    email: state.form.email,
+    phone: state.form.phone,
+    amount:totalAmount
+  }).toString();
+  
+  localStorage.removeItem("synergi-zuf-donations");
   state.donations = [];
-  state.form = { ...form }
+  state.form = { ...form };
 
-  window.location.href = window.location.href = "/success";
+  window.location.href = window.location.href =
+    "/success" + params;
 }
 
 function showSuccessPage() {
@@ -208,14 +225,14 @@ function onlyNumber($event) {
 
 async function getGateways() {
   const { data } = await Api.fetchGateways();
-  state.gateways = data
+  state.gateways = data;
   // state.stripePublicKey = data?.data?.public_key;
 }
 function openModel() {
-  state.isCartOpened = true
+  state.isCartOpened = true;
 }
 function openDonationModal() {
-  state.isAddDonationOpened = true
+  state.isAddDonationOpened = true;
 }
 
 function assets(asset) {
@@ -227,68 +244,83 @@ function donationAdded(donation) {
 
   if (state.selectedItem == null) {
     state.donations = [...state.donations, { ...donation }];
-    localStorage.setItem('synergi-zuf-donations',JSON.stringify(state.donations))
+    localStorage.setItem(
+      "synergi-zuf-donations",
+      JSON.stringify(state.donations)
+    );
   } else {
     state.donations[state.selectedItem] = state.current_donation;
     state.selectedItem = null;
-  } 
+  }
 }
 
 function toggleCustomProject(type, selected) {
-  if (type == "admin_fee") { 
-    state.form.admin_fee_cover = selected
+  if (type == "admin_fee") {
+    state.form.admin_fee_cover = selected;
     // console.log(type, selected, state.form.admin_fee_cover)
-    
   } else {
-    state.form.paper_copy = selected
+    state.form.paper_copy = selected;
     // console.log(type,selected,state.form.paper_copy)
   }
 }
 
 function updateMiniCart(amount) {
   let minicarts = document.querySelectorAll(".synergy-mini-cart-label");
-  minicarts.forEach((element) => { 
-    element.innerText = state.currencies[state.form.selected_currency] + parseFloat(amount).toFixed(2);
-  })
+  minicarts.forEach((element) => {
+    element.innerText =
+      state.currencies[state.form.selected_currency] +
+      parseFloat(amount).toFixed(2);
+  });
 }
 
 function addAnotherDonation() {
-  state.isCartOpened = false
-  state.isAddDonationOpened = true
+  state.isCartOpened = false;
+  state.isAddDonationOpened = true;
 }
 
 function viewBasket() {
-  state.isCartOpened = true
-  state.isAddDonationOpened = false
+  state.isCartOpened = true;
+  state.isAddDonationOpened = false;
 }
 </script>
-  
+
 <template>
   <div id="synergy-donation-tailwind">
-
-    <div id="synergidigital-snackbar" class="absolute z-50 bg-green text-white bottom-2 left-1/2 transform -translate-x-1/2 rounded-sm hidden">
+    <div
+      id="synergidigital-snackbar"
+      class="absolute z-50 bg-green text-white bottom-2 left-1/2 transform -translate-x-1/2 rounded-sm hidden"
+    >
       <p class="px-3">Donation Added to Basket</p>
     </div>
 
-    <VueSidePanel v-model="state.isCartOpened" class="md:w-1/3 w-full bg-gray-100">
-      <Basket :donations="state.donations" 
-            :form="state.form" 
-            :currencies="state.currencies" 
-            :gateways="state.gateways" 
-            :stripePublicKey="state.stripePublicKey"
-            @toggleCustomProject="toggleCustomProject" 
-            @initAgain="initAgain"
-            @addAnotherDonation="addAnotherDonation"
-            @totalAmount="updateMiniCart"
-            @removeItem="removeItem"/>
+    <VueSidePanel
+      v-model="state.isCartOpened"
+      class="md:w-1/3 w-full bg-gray-100"
+    >
+      <Basket
+        :donations="state.donations"
+        :form="state.form"
+        :currencies="state.currencies"
+        :gateways="state.gateways"
+        :stripePublicKey="state.stripePublicKey"
+        @toggleCustomProject="toggleCustomProject"
+        @initAgain="initAgain"
+        @addAnotherDonation="addAnotherDonation"
+        @totalAmount="updateMiniCart"
+        @removeItem="removeItem"
+      />
     </VueSidePanel>
-    <VueSidePanel v-model="state.isAddDonationOpened" class="md:w-1/3 w-full bg-gray-100">
-      <DonationModal 
-      ref="donationComponentRef"
-      :form="state.form" 
-      @viewBasket="viewBasket"
-      :currencies="state.currencies"
-      @added="donationAdded"/>
+    <VueSidePanel
+      v-model="state.isAddDonationOpened"
+      class="md:w-1/3 w-full bg-gray-100"
+    >
+      <DonationModal
+        ref="donationComponentRef"
+        :form="state.form"
+        @viewBasket="viewBasket"
+        :currencies="state.currencies"
+        @added="donationAdded"
+      />
     </VueSidePanel>
   </div>
 </template>

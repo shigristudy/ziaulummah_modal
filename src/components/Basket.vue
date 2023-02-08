@@ -675,7 +675,7 @@ export default {
       console.log(error);
     },
     initAgain() {
-      this.$emit('initAgain')
+      this.$emit('initAgain',this.totalAmount)
     },
     $formatAmount(amount) {
       // this.currencies[this.form.selected_currency]
