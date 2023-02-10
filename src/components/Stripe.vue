@@ -55,9 +55,6 @@
           </svg>
         </button>
       </div>
-
-      OR
-      <div id="payment-request-button"></div>
       <div>
         <p class="text-red" v-if="stripeError">
           {{ stripeError }}
@@ -115,33 +112,7 @@ export default {
       this.cardCvc.mount("#card-cvc");
       this.cardExpiry.mount("#card-expiry");
       this.cardNumber.mount("#card-number");
-
-
-      // const paymentRequest = stripe.paymentRequest({
-      //   country: 'US',
-      //   currency: 'usd',
-      //   total: {
-      //     label: 'Demo total',
-      //     amount: 1099,
-      //   },
-      //   requestPayerName: true,
-      //   requestPayerEmail: true,
-      // });
-
-      // const prButton = elements.create('paymentRequestButton', {
-      //   paymentRequest,
-      // });
-      // (async () => {
-      //   // Check the availability of the Payment Request API first.
-      //   const result = await paymentRequest.canMakePayment();
-      //   if (result) {
-      //     console.log(result)
-      //     prButton.mount('#payment-request-button');
-      //   } else {
-      //     document.getElementById('payment-request-button').style.display = 'none';
-      //   }
-      // })();
-
+      
       this.listenForErrors();
     },
 

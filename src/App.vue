@@ -201,7 +201,8 @@ function initAgain(totalAmount) {
     last_name: state.form.last_name,
     email: state.form.email,
     phone: state.form.phone,
-    amount:totalAmount
+    amount: totalAmount,
+    currency: form.selected_currency
   }).toString();
   
   localStorage.removeItem("synergi-zuf-donations");
@@ -209,7 +210,7 @@ function initAgain(totalAmount) {
   state.form = { ...form };
 
   window.location.href = window.location.href =
-    "/success" + params;
+    "/success?" + params;
 }
 
 function showSuccessPage() {
