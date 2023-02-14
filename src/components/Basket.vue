@@ -661,6 +661,8 @@ export default {
         if (pay.data.success) {
           this.initAgain();
           this.moveForward()
+        } else {
+          this.errors.authentication = pay.data.message
         }
       }
     },

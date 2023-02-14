@@ -29,7 +29,8 @@ let form = {
     paper_copy: false,
     admin_fee_cover: false,
     terms_agreement: false,
-    selected_currency:'GBP'
+    selected_currency: 'GBP',
+    capture_url: window.location.href
 }
 
 
