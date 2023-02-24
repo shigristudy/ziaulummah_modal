@@ -1,37 +1,21 @@
 <template>
   <div>
-    <form>
-      <!-- <div class="stripe">
-        <label for="Card Number" class="stripe__label"> Card Number </label>
-        <div>
-          <div id="card-number" class="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"></div>
-          <span class="stripe__error" v-if="cardNumberError">
-            {{ cardNumberError }}
-          </span>
-        </div>
-      </div>
-
-      <div class="stripe__box">
-        <div class="stripe__box__cvv">
-          <label for="Card CVC" class="stripe__label"> Card CVC </label>
-          <div>
-            <div id="card-cvc" class="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"></div>
-            <span class="stripe__error" v-if="cardCvcError">
-              {{ cardCvcError }}
-            </span>
-          </div>
-        </div>
-        <div class="stripe__box__expiry">
-          <label for="Expiry Month" class="stripe__label"> Expiry </label>
-          <div>
-            <div id="card-expiry" class="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"></div>
-            <span class="stripe__error" v-if="cardExpiryError">
-              {{ cardExpiryError }}
-            </span>
-          </div>
-        </div>
-      </div> -->
-
+    <div :class="{
+      'flex' : loading,
+      'hidden':!loading
+    }" class="bg-green  items-center justify-center flex-col">
+      <h1 class="text-white font-bold p-6">
+        Waiting for Payment Process ....  
+      </h1>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto;display: block; shape-rendering: auto;" width="60px" height="60px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+        <circle cx="50" cy="50" fill="none" stroke="#FFFFFF" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138">
+          <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1">
+          </animateTransform>
+        </circle>
+      </svg>
+      <br>
+    </div>
+    <form v-show="!loading">
       <div class="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none">
         <div id="card-element">
         </div>
@@ -154,6 +138,7 @@ export default {
     },
 
     handleFormSubmit() {
+      this.loading = true
       let vm = this
       this.stripe.confirmCardPayment(this.client_secret, {
         payment_method: {
@@ -164,13 +149,16 @@ export default {
           }
         },
         setup_future_usage: 'off_session'
-      }).then(function(result) {
+      }).then(function (result) {
+        
         if (result.error) {
           vm.stripeError = result.error.message;
+          vm.loading = false
         } else {
           if (result.paymentIntent.status === 'succeeded') {
             vm.stripeSuccess = "payment successfully completed."
             vm.$emit("stripePayment", vm.payment_intent);
+            vm.loading = false
           }
           return false;
         }
