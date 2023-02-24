@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, ref, computed, createApp, nextTick } from "vue";
+import { reactive, onMounted, ref, computed, createApp, nextTick,provide } from "vue";
 import Api from "./services/api";
 import countries from "./data/countries.json";
 import Basket from "./components/Basket.vue";
@@ -65,13 +65,13 @@ function bindQuickBar() {
   let quickbarElements = document.querySelectorAll(
     ".synergidigital-quick-donation"
   );
-  console.log(quickbarElements);
+  
   if (quickbarElements) {
     quickbarElements.forEach((element) => {
-      createApp(QuickBar, {
+      const app = createApp(QuickBar, {
         onAdded(donation) {
           donationAdded(donation);
-
+          // app.provide('donations',state.donations)
           document
             .getElementById("synergidigital-snackbar")
             .classList.remove("hidden");
@@ -84,7 +84,9 @@ function bindQuickBar() {
           // Open Basket
           viewBasket();
         },
-      }).mount(element);
+      })
+      app.provide('donations',state.donations)
+      app.mount(element);
     });
   }
 
@@ -206,6 +208,7 @@ function initAgain(totalAmount) {
   }).toString();
   
   localStorage.removeItem("synergi-zuf-donations");
+  
   state.donations = [];
   state.form = { ...form };
 
@@ -241,7 +244,6 @@ function assets(asset) {
 }
 
 function donationAdded(donation) {
-  // console.log(donation)
 
   if (state.selectedItem == null) {
     state.donations = [...state.donations, { ...donation }];
@@ -249,6 +251,8 @@ function donationAdded(donation) {
       "synergi-zuf-donations",
       JSON.stringify(state.donations)
     );
+
+    const propsUpdatedEvent = new Event('propsUpdated'); window.dispatchEvent(propsUpdatedEvent);
   } else {
     state.donations[state.selectedItem] = state.current_donation;
     state.selectedItem = null;
@@ -320,6 +324,7 @@ function viewBasket() {
         :form="state.form"
         @viewBasket="viewBasket"
         :currencies="state.currencies"
+        :donations="state.donations"
         @added="donationAdded"
       />
     </VueSidePanel>

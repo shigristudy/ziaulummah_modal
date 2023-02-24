@@ -152,7 +152,7 @@
 import Api from "../services/api";
 import { current_donation } from "../data/resets"
 export default {
-  props:['form','currencies'],
+  props:['form','currencies','donations'],
   data() {
     return {
       wordpress_page_id:0,
@@ -164,16 +164,7 @@ export default {
       errors: {},
       validated: false,
       wordpressPageID: 0,
-      frequencies: [
-        {
-          name: 'Single',
-          selected:false
-        },
-        {
-          name: 'Monthly',
-          selected:true
-        }
-      ]
+      
     }
   },
   created() {
@@ -254,7 +245,6 @@ export default {
         this.validated = false;
       }
 
-      console.log(this.current_donation)
       if (this.current_donation.amount == 0 || !this.current_donation.amount) {
         if (!this.current_donation.fix_amount) {
           this.errors.donation_type_id = "Please Enter Amount.";
@@ -276,6 +266,37 @@ export default {
       this.current_donation.project = obj
       return obj;
     },
+    all_monthly() {
+      if(this.donations.length == 0) return false
+      return this.donations.every((item) => item.monthly)
+    },
+    all_one_off() {
+      if(this.donations.length == 0) return false
+      return this.donations.every((item) => !item.monthly)
+    },
+    frequencies() {
+
+      if (this.all_monthly) {
+        return [{
+            name: 'Monthly',
+            selected: true
+        }]     
+      } else if(this.all_one_off) {
+        return [{
+            name: 'Single',
+            selected: false
+        }]     
+        
+      } else {
+        return [{
+            name: 'Single',
+            selected: false
+        },{
+            name: 'Monthly',
+            selected: true
+        }]    
+      }
+    }
   }
 };
 </script>

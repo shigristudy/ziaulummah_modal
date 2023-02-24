@@ -618,7 +618,8 @@ export default {
     },
     removeItem(index) {
       this.$emit('removeItem',index)
-      localStorage.setItem('synergi-zuf-donations',JSON.stringify(this.donations))
+      localStorage.setItem('synergi-zuf-donations', JSON.stringify(this.donations))
+      const propsUpdatedEvent = new Event('propsUpdated'); window.dispatchEvent(propsUpdatedEvent);
     },
     goCardlesscompleted(res) {
       // if (pay.data.success) {
@@ -626,12 +627,18 @@ export default {
         this.moveForward()
       // }
     },
-    async stripePayment(token) {
+    async stripePayment(payment_intent) {
       this.form.donations = this.donations
       let { data } = await Api.saveDonation(this.form);
+      if (data.success) {
+        this.initAgain();
+        this.moveForward()
+      }
+
+      return;
       if (data.success == true) {
         let payment = {};
-        payment.token = token;
+        payment.payment_intent = payment_intent;
         payment.name = this.form.first_name;
         payment.email = this.form.email;
         payment.amount = { monthly: 0, single: 0 };
@@ -658,9 +665,10 @@ export default {
           }
         });
         let pay = await Api.makePayment(payment);
+        console.log(pay)
         if (pay.data.success) {
-          this.initAgain();
-          this.moveForward()
+          // this.initAgain();
+          // this.moveForward()
         } else {
           this.errors.authentication = pay.data.message
         }

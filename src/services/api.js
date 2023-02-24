@@ -64,4 +64,7 @@ export default {
   gocardlessHostedUrl(payload) {
     return axios.post(url("gocardless-hosted-url"), payload);
   },
+  createStripeIntentRequest(payload) {
+    return axios.post(url('stripe/payment/intent'), payload);
+  }
 };

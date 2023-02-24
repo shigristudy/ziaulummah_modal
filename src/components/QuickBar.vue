@@ -20,8 +20,7 @@
         v-model="current_donation.monthly"
         aria-label="Frequency"
       >
-        <option :value="false">One Off</option>
-        <option :value="true">Monthly</option>
+        <option v-for="(frequency,index) in frequencies" :key="'fre_' + index"  :value="frequency.selected" >{{ frequency.name }}</option>
       </select>
 
       <select
@@ -49,9 +48,10 @@
   </form>
 </template>
 <script>
+
 import Api from "../services/api";
 export default {
-  props: [],
+ 
   data() {
     return {
       current_donation: {
@@ -65,6 +65,7 @@ export default {
         project: null,
       },
       not_validated: false,
+      donations:JSON.parse(localStorage.getItem("synergi-zuf-donations")) ?? []
     };
   },
   created() {
@@ -72,6 +73,10 @@ export default {
   },
   mounted() {
     // this.setUpStripe();
+    // let vm = this
+    window.addEventListener('propsUpdated', (event) => {
+      this.donations = JSON.parse(localStorage.getItem("synergi-zuf-donations"))
+    });
   },
   methods: {
     async getQuickDonationProject() {
@@ -89,57 +94,49 @@ export default {
       this.$emit("added", this.current_donation);
 
       this.current_donation.amount = null;
-      this.current_donation.monthly = false;
+      this.current_donation.monthly = null;
     },
     validateDonation() {
       if (!this.current_donation.amount || this.current_donation.amount <= 0)
         return false;
       return true;
     },
-    // setUpStripe() {
-    //   const stripe = Stripe(
-    //     "pk_test_51KEZblITpRY73U53TSXaNrW8Uj4zeIFKDFogBqAHeBFrqmtPgflNm5PY0gdbRStebJZnTvqe5GJhaZciHti7t20M00BMb5ZjIB"
-    //   );
-    //   this.stripe = stripe;
-
-    //   const elements = stripe.elements();
-
-    //   const paymentRequest = stripe.paymentRequest({
-    //     country: "US",
-    //     currency: "usd",
-    //     total: {
-    //       label: "Demo total",
-    //       amount: 3000,
-    //     },
-    //     displayItems: [
-    //       {
-    //         label: "First",
-    //         amount: 1000,
-    //       },
-    //       {
-    //         label: "Second",
-    //         amount: 2000,
-    //       },
-    //     ],
-    //     requestPayerName: true,
-    //     requestPayerEmail: true,
-    //   });
-
-    //   const prButton = elements.create("paymentRequestButton", {
-    //     paymentRequest,
-    //   });
-
-    //   (async () => {
-    //     // Check the availability of the Payment Request API first.
-    //     const result = await paymentRequest.canMakePayment();
-    //     console.log(result);
-    //     if (result) {
-    //       prButton.mount("#payment-request-button");
-    //     } else {
-    //       // document.getElementById('payment-request-button').style.display = 'none';
-    //     }
-    //   })();
-    // },
+    
   },
+  
+  computed: {
+    all_monthly() {
+      
+      if(this.donations.length == 0) return false
+      return this.donations.every((item) => item.monthly)
+    },
+    all_one_off() {
+      if(this.donations.length == 0) return false
+      return this.donations.every((item) => !item.monthly)
+    },
+    frequencies() {
+
+      if (this.all_monthly) {
+        return [{
+            name: 'Monthly',
+            selected: true
+        }]     
+      } else if(this.all_one_off) {
+        return [{
+            name: 'Single',
+            selected: false
+        }]     
+        
+      } else {
+        return [{
+            name: 'Single',
+            selected: false
+        },{
+            name: 'Monthly',
+            selected: true
+        }]    
+      }
+    }
+  }
 };
 </script>

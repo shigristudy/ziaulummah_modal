@@ -91,7 +91,6 @@ export default {
       }
     },
     pusherGocardlessLister(donation_id) {
-      console.log(donation_id)
       var pusher = new Pusher('23ccf009fe890a7ca4ae', {
         cluster: 'eu',
         // authEndpoint: this.auth_url + '/broadcasting/auth'

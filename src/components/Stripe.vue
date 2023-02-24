@@ -1,7 +1,7 @@
 <template>
   <div>
     <form>
-      <div class="stripe">
+      <!-- <div class="stripe">
         <label for="Card Number" class="stripe__label"> Card Number </label>
         <div>
           <div id="card-number" class="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"></div>
@@ -30,8 +30,12 @@
             </span>
           </div>
         </div>
-      </div>
+      </div> -->
 
+      <div class="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none">
+        <div id="card-element">
+        </div>
+      </div>
       <div class="my-6 flex justify-between">
         <button type="button" @click="moveBack()" class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 mr-3">
@@ -40,7 +44,7 @@
           Back
         </button>
         <button 
-          @click.prevent="submitFormToCreateToken()"
+          @click.prevent="handleFormSubmit()"
           :disabled="loading"
           type="button" class="px-6 pt-2.5 pb-2 bg-red text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
           Donate
@@ -60,10 +64,16 @@
           {{ stripeError }}
         </p>
       </div>
+      <div>
+        <p class="text-green" v-if="stripeSuccess">
+          {{ stripeSuccess }}
+        </p>
+      </div>
     </form>
   </div>
 </template>
 <script>
+import Api from "../services/api";
 export default {
   props: ["amount","customer","stripePublicKey"],
   data() {
@@ -82,21 +92,40 @@ export default {
 
       // errors
       stripeError: "",
+      stripeSuccess: "",
       cardCvcError: "",
       cardExpiryError: "",
       cardNumberError: "",
       error: false,
 
       loading: false,
-      url: import.meta.env.VITE_WEB_URL
+      url: import.meta.env.VITE_WEB_URL,
+      client_secret: '',
+      card: null,
+      payment_intent: null
     };
   },
 
   mounted() {
-    this.setUpStripe();
+    // Create Payment Intent
+    // console.log(this.amount)
+    this.createStripeIntent()
+    // Get Payment Details
   },
 
   methods: {
+    async createStripeIntent() {
+      const { data } = await Api.createStripeIntentRequest({
+        amount: this.amount,
+        currency: this.customer.selected_currency
+      })
+
+      this.payment_intent = data
+
+      this.client_secret = data.client_secret
+
+      this.setUpStripe();
+    },
     moveBack() {
       this.$emit('moveBack')
     },
@@ -105,15 +134,47 @@ export default {
       this.stripe = stripe;
 
       const elements = stripe.elements();
-      this.cardCvc = elements.create("cardCvc");
-      this.cardExpiry = elements.create("cardExpiry");
-      this.cardNumber = elements.create("cardNumber");
 
-      this.cardCvc.mount("#card-cvc");
-      this.cardExpiry.mount("#card-expiry");
-      this.cardNumber.mount("#card-number");
-      
-      this.listenForErrors();
+      var card = elements.create("card");
+      this.card = card
+      card.mount("#card-element");
+
+
+      card.addEventListener('change', ({error}) => {
+        if (error) {
+          this.stripeError = error.message;
+          this.error = true
+          this.loading = false
+        }else {
+          this.error = false
+          this.loading = false
+          this.stripeError = "";
+        }
+      });
+    },
+
+    handleFormSubmit() {
+      let vm = this
+      this.stripe.confirmCardPayment(this.client_secret, {
+        payment_method: {
+          card: this.card,
+          billing_details: {
+            name: this.customer.name,
+            email: this.customer.email
+          }
+        },
+        setup_future_usage: 'off_session'
+      }).then(function(result) {
+        if (result.error) {
+          vm.stripeError = result.error.message;
+        } else {
+          if (result.paymentIntent.status === 'succeeded') {
+            vm.stripeSuccess = "payment successfully completed."
+            vm.$emit("stripePayment", vm.payment_intent);
+          }
+          return false;
+        }
+      });
     },
 
     listenForErrors() {
