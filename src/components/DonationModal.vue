@@ -215,14 +215,14 @@ export default {
       const { data } = await Api.fetchProjects(this.current_donation.category_id)
       this.projects = data.projects
 
-      const pagedProject = this.projects.find((value, index) => {
-        return value.wordpress_page_id == this.wordpress_page_id
-      })
+      // const pagedProject = this.projects.find((value, index) => {
+      //   return value.wordpress_page_id == this.wordpress_page_id
+      // })
       
-      if (!pagedProject) return;
+      // if (!pagedProject) return;
 
-      this.current_donation.project_id = pagedProject.id
-      this.current_donation.project = pagedProject
+      // this.current_donation.project_id = pagedProject.id
+      // this.current_donation.project = pagedProject
     },
     addDonation() {
       
