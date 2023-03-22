@@ -198,11 +198,8 @@ export default {
       this.categories = data
 
       const id = await this.getWordpressCurrentPageID();
-      console.log(id)
       this.wordpressPageID = String(id)
-      console.log(this.wordpressPageID)
       this.categories.forEach(cat => {
-        console.log(cat.wordpress_page_id)
         if (cat.wordpress_page_id && cat.wordpress_page_id.split(',').includes(this.wordpressPageID)) {
           this.current_donation.category_id = cat.id
           this.fetchProjects()
