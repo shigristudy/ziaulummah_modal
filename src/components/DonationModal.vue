@@ -25,8 +25,8 @@
         </div>
 
         <div class="border-t border-gray-200 py-6 px-4 sm:px-10" v-if="projects">
-          <!-- <div class="mb-4">
-            <label for="select-category" class=" text-green dark:text-black font-bold block mb-2 text-lg">Select Category</label>
+          <div class="mb-4">
+            <label for="select-category" class=" text-green dark:text-black font-bold block mb-2 text-lg">Category</label>
             <select
               id="select-category"
               v-model="current_donation.category_id"
@@ -37,10 +37,10 @@
               <option :value="0">Select a Category</option>
               <option v-for="(cat,index) in categories" :key="'category_'+ index" :value="cat.id">{{ cat.name }}</option>
             </select>
-          </div> -->
+          </div>
 
           <div class="mb-4">
-            <label for="select-project" class=" text-green dark:text-black font-bold block mb-2 text-lg">Select Project</label>
+            <label for="select-project" class=" text-green dark:text-black font-bold block mb-2 text-lg">Project</label>
             <select
               id="select-project"
               v-model="current_donation.project_id"
@@ -53,7 +53,7 @@
           </div>
 
           <div class="mb-4" v-if="donation_types && donation_types.donation_types">
-            <label for="select-donation-type" class=" text-green dark:text-black font-bold block mb-2 text-lg">Select Donation Type</label>
+            <label for="select-donation-type" class=" text-green dark:text-black font-bold block mb-2 text-lg">Donation Type</label>
             <select
               @change="addDonationType"
               id="select-donation-type"
@@ -89,7 +89,7 @@
             </ul>
           </div>
           
-          <div class="mb-4">
+          <div class="mb-4" v-if="current_donation.project && current_donation.project.is_other_amount_allowed">
             <label
               for="other-amount"
               class="form-label inline-block mb-2 text-green dark:text-black font-bold"
@@ -169,7 +169,7 @@ export default {
   },
   created() {
     this.getWordpressCurrentPageID();
-    this.fetchProjects()
+    this.fetchcategories()
   },
   methods: {
     viewBasket() {
@@ -190,27 +190,28 @@ export default {
                 }
             });
         }
-        this.wordpress_page_id = parseInt(id);
+        this.wordpress_page_id = id;
     },
-    // async fetchcategories() {
-    //   const { data } = await Api.fetchCategories()
-    //   this.categories = data
+    async fetchcategories() {
+      const { data } = await Api.fetchCategories()
+      this.categories = data
 
-    //   const id = await this.getWordpressCurrentPageID();
-    //   this.wordpressPageID = id
-
-    //   this.categories.forEach(cat => {
-    //     if (cat.wordpress_page_id == this.wordpressPageID) {
-    //       this.current_donation.category_id = cat.id
-    //       this.fetchProjects()
-    //     }
-    //   });
-
-    //   console.log("current donation" ,this.current_donation)
-    // },  
+      const id = await this.getWordpressCurrentPageID();
+      this.wordpressPageID = String(id)
+      this.categories.forEach(cat => {
+        if (cat.wordpress_page_id && cat.wordpress_page_id.split(',').includes(this.wordpressPageID)) {
+          this.current_donation.category_id = cat.id
+          this.fetchProjects()
+        }
+      });
+      if (!this.current_donation.category_id) {
+        this.current_donation.category_id = this.categories[0].id
+        this.fetchProjects()
+      }
+    },  
     async fetchProjects() {
-      const { data } = await Api.fetchAllProjects()
-      this.projects = data
+      const { data } = await Api.fetchProjects(this.current_donation.category_id)
+      this.projects = data.projects
 
       const pagedProject = this.projects.find((value, index) => {
         return value.wordpress_page_id == this.wordpress_page_id

@@ -252,7 +252,9 @@ function donationAdded(donation) {
       JSON.stringify(state.donations)
     );
 
-    const propsUpdatedEvent = new Event('propsUpdated'); window.dispatchEvent(propsUpdatedEvent);
+    try {
+      const propsUpdatedEvent = new Event('propsUpdated'); window.dispatchEvent(propsUpdatedEvent);
+    } catch (e) {}
   } else {
     state.donations[state.selectedItem] = state.current_donation;
     state.selectedItem = null;

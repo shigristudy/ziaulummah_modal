@@ -16,6 +16,7 @@
             <div class="flow-root">
               <ul role="list" class="" v-if="donations.length">
                 <template v-for="(donation,index) in donations"  :key="'donation_' + index">
+                  
                   <li 
                     v-if="donation.project"
                     class="basket-cards-list flex py-4 px-2 !border-2 !border-green dark:!border-black mb-2 bg-white">

@@ -7,7 +7,8 @@ let current_donation = {
     fix_amount: 0,
     qty: 1,
     totalAmount: null,
-    project: null
+    project: null,
+    is_other_amount_allowed:null
 }
 
 let form = {
