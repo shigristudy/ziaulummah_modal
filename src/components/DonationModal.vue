@@ -190,7 +190,8 @@ export default {
                 }
             });
         }
-        this.wordpress_page_id = id;
+      this.wordpress_page_id = id;
+      return id
     },
     async fetchcategories() {
       const { data } = await Api.fetchCategories()
