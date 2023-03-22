@@ -155,7 +155,7 @@ export default {
   props:['form','currencies','donations'],
   data() {
     return {
-      wordpress_page_id:0,
+      wordpress_page_id:"0",
       donation_amounts: [5, 10, 20, 50, 100],
       categories: null,
       projects: null,
@@ -198,7 +198,9 @@ export default {
 
       const id = await this.getWordpressCurrentPageID();
       this.wordpressPageID = String(id)
+      console.log(this.wordpressPageID)
       this.categories.forEach(cat => {
+        console.log(cat.wordpress_page_id)
         if (cat.wordpress_page_id && cat.wordpress_page_id.split(',').includes(this.wordpressPageID)) {
           this.current_donation.category_id = cat.id
           this.fetchProjects()
