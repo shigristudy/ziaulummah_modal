@@ -210,6 +210,8 @@ export default {
       }
     },  
     async fetchProjects() {
+      if(!this.current_donation.category_id) return 
+
       const { data } = await Api.fetchProjects(this.current_donation.category_id)
       this.projects = data.projects
 
