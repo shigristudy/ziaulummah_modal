@@ -197,6 +197,7 @@ export default {
       this.categories = data
 
       const id = await this.getWordpressCurrentPageID();
+      console.log(id)
       this.wordpressPageID = String(id)
       console.log(this.wordpressPageID)
       this.categories.forEach(cat => {
