@@ -42,6 +42,7 @@
           <div class="mb-4">
             <label for="select-project" class=" text-green dark:text-black font-bold block mb-2 text-lg">Project</label>
             <select
+              @change="projectChanged"
               id="select-project"
               v-model="current_donation.project_id"
               class="form-select block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
@@ -68,13 +69,26 @@
 
           
           <div class="mb-4">
-            <label for="" class=" text-green dark:text-black font-bold block mb-2 text-lg">Frequency</label>
-            <ul class="flex gap-2">
-              <li class="relative" v-for="(frequency,index) in frequencies" :key="index">
-                <input class="sr-only peer" type="radio" v-model="current_donation.monthly" name="frequency" :value="frequency.selected" :id="'frequency_'+index">
-                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green dark:peer-checked:ring-black peer-checked:ring-2 peer-checked:border-transparent" :for="'frequency_'+index">{{ frequency.name }}</label>
-                <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
-              </li>
+            <label for="" class=" text-green dark:text-black font-bold block mb-2 text-lg" v-if="current_donation && current_donation.project">Frequency</label>
+            <ul class="flex gap-2" v-if="current_donation && current_donation.project">
+              <template v-for="(frequency,index) in frequencies" :key="index">
+                <li class="relative">
+                  <input
+                  class="sr-only peer" :disabled="!checkIfAllowed(frequency.name)" type="radio" v-model="current_donation.monthly" name="frequency" :value="frequency.selected" :id="'frequency_'+index">
+                  <label
+                  :class="{
+                    'cursor-not-allowed bg-gray-400 hover:bg-gray-500' : !checkIfAllowed(frequency.name),
+                    'cursor-pointer' : checkIfAllowed(frequency.name),
+                  }"
+                  class="select-none flex px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none hover:bg-gray-50 peer-checked:ring-green dark:peer-checked:ring-black peer-checked:ring-2 peer-checked:border-transparent" 
+                  :for="'frequency_'+index">{{ frequency.name }}</label>
+                  <!-- <div class="absolute w-full h-5 top-0 right-0" 
+                  :class="{ 
+                    'block':checkIfAllowed(frequency.name),
+                    'hidden':!checkIfAllowed(frequency.name)
+                   }">Frequency not allow for current project</div> -->
+                </li>
+              </template>
             </ul>
           </div>
           
@@ -83,7 +97,7 @@
             <ul class="flex gap-2">
               <li class="relative" v-for="(amount,index) in current_donation.project.fix_amounts.split(',')" :key="index">
                 <input class="sr-only peer" type="radio" v-model="current_donation.fix_amount" :value="parseFloat(amount)" name="amount" :id="'amount_'+amount">
-                <label class="flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green dark:peer-checked:ring-black peer-checked:ring-2 peer-checked:border-transparent" :for="'amount_'+amount">{{ $formatAmount(amount) }}</label>
+                <label class="select-none flex px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none hover:bg-gray-50 peer-checked:ring-green dark:peer-checked:ring-black peer-checked:ring-2 peer-checked:border-transparent" :for="'amount_'+amount">{{ $formatAmount(amount) }}</label>
                 <div class="absolute hidden w-5 h-5 peer-checked:block top-5 right-3"></div>
               </li>
             </ul>
@@ -172,6 +186,19 @@ export default {
     this.fetchcategories()
   },
   methods: {
+    projectChanged() {
+      this.current_donation.monthly = null
+    },
+    checkIfAllowed(frequency) {
+      if (this.current_donation && this.current_donation.project) {
+        if (frequency == 'Single') {
+          if(this.current_donation.project.allow_single) return true
+        } else {
+          if(this.current_donation.project.allow_monthly) return true
+        }
+      }
+      return false
+    },
     viewBasket() {
       this.$emit('viewBasket')
     },
@@ -211,10 +238,12 @@ export default {
       }
     },  
     async fetchProjects() {
+      this.current_donation.project_id = 0
       if(!this.current_donation.category_id) return 
 
       const { data } = await Api.fetchProjects(this.current_donation.category_id)
       this.projects = data.projects
+      // this.current_donation.project_id 
 
       // const pagedProject = this.projects.find((value, index) => {
       //   return value.wordpress_page_id == this.wordpress_page_id
@@ -249,6 +278,19 @@ export default {
         this.validated = false;
       }
 
+      if (this.current_donation.monthly == undefined || this.current_donation.monthly == null) {
+        this.errors.donation_type_id = "Donation Frequency is required.";
+        this.validated = false;
+      }
+
+      if (this.all_one_off && this.current_donation.monthly) {
+        this.errors.logical_error = "You cannot add a monthly donation if a single donation is added into your basket. Please remove the single donation first"
+        this.validated = false;
+      } else if (this.all_monthly && !this.current_donation.monthly) {
+        this.errors.logical_error = "You cannot add a single donation if a monthly donation is added into your basket. Please remove the monthly donation first" 
+        this.validated = false;
+      }
+
       if (this.current_donation.amount == 0 || !this.current_donation.amount) {
         if (!this.current_donation.fix_amount) {
           this.errors.donation_type_id = "Please Enter Amount.";
@@ -279,7 +321,14 @@ export default {
       return this.donations.every((item) => !item.monthly)
     },
     frequencies() {
-
+      return [{
+        name: 'Single',
+        selected: false
+      },{
+        name: 'Monthly',
+        selected: true
+      }]
+      
       if (this.all_monthly) {
         return [{
             name: 'Monthly',
@@ -293,12 +342,14 @@ export default {
         
       } else {
         return [{
-            name: 'Single',
-            selected: false
+          name: 'Single',
+          selected: false,
+          disabled: false
         },{
-            name: 'Monthly',
-            selected: true
-        }]    
+          name: 'Monthly',
+          selected: true,
+          disabled:false
+        }]
       }
     }
   }

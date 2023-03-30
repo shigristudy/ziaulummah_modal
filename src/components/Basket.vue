@@ -62,7 +62,7 @@
             </div>
           </div>
         </div>
-        <div class="mb-4 px-4 sm:px-6">
+        <div class="mb-4 px-4 sm:px-6" v-if="!all_monthly">
           <ul class="flex gap-2">
             <li class="basket-cards-list relative w-1/2 flex flex-col justify-center items-center border-2 border-green dark:border-black p-4 bg-white">
               <h2 class="font-bold text-lg text-green dark:text-black mb-1">Paper Copy of Receipt</h2>
@@ -695,6 +695,10 @@ export default {
   },
   
   computed: {
+    all_monthly() {
+      if(this.donations.length == 0) return false
+      return this.donations.every((item) => item.monthly)
+    },
     hasMonthly() {
       return this.donations.some((d) => d.monthly);
     },
