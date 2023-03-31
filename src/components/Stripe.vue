@@ -101,7 +101,9 @@ export default {
     async createStripeIntent() {
       const { data } = await Api.createStripeIntentRequest({
         amount: this.amount,
-        currency: this.customer.selected_currency
+        currency: this.customer.selected_currency,
+        name: (this.customer.first_name + ' ' + this.customer.last_name).trim(),
+        email:this.customer.email
       })
 
       this.payment_intent = data
