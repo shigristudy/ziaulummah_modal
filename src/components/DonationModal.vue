@@ -199,7 +199,7 @@ export default {
       let amounts = ( this.current_donation.project && this.current_donation.project.fix_amounts) ? this.current_donation.project.fix_amounts.split(',') : []
 
       if(amounts.length > 0){
-        this.current_donation.fix_amount = amounts[0]
+        this.current_donation.fix_amount = parseFloat(amounts[0])
       }
     },
     checkIfAllowed(frequency) {
