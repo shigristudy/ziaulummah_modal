@@ -26,13 +26,13 @@
 
         <div class="border-t border-gray-200 py-6 px-4 sm:px-10" v-if="projects">
           <div class="mb-4">
-            <label for="select-category" class=" text-green dark:text-black font-bold block mb-2 text-lg">Category</label>
+            <label for="select-category" class="required text-green dark:text-black font-bold block mb-2 text-lg">Category</label>
             <select
               id="select-category"
               v-model="current_donation.category_id"
               @change="fetchProjects()"
               class="form-select block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
-              aria-label="Default select example"
+              aria-label="Categories"
             >
               <option :value="0">Select a Category</option>
               <option v-for="(cat,index) in categories" :key="'category_'+ index" :value="cat.id">{{ cat.name }}</option>
@@ -40,13 +40,14 @@
           </div>
 
           <div class="mb-4">
-            <label for="select-project" class=" text-green dark:text-black font-bold block mb-2 text-lg">Project</label>
+            <label for="select-project" class="required text-green dark:text-black font-bold block mb-2 text-lg">Project</label>
             <select
               @change="projectChanged"
               id="select-project"
               v-model="current_donation.project_id"
-              class="form-select block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
-              aria-label="Default select example"
+              class="form-select block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white  focus:outline-none"
+              aria-label="Projects"
+              :class="{ '!border-red' : errors && errors.project_id}"
             >
             <option :value="0">Select a project</option>
             <option v-for="(project,index) in projects" :key="'project_'+ index" :value="project.id">{{ project.title }}</option>
@@ -54,13 +55,15 @@
           </div>
 
           <div class="mb-4" v-if="donation_types && donation_types.donation_types">
-            <label for="select-donation-type" class=" text-green dark:text-black font-bold block mb-2 text-lg">Donation Type</label>
+            <label for="select-donation-type" class="required text-green dark:text-black font-bold block mb-2 text-lg">Donation Type</label>
             <select
               @change="addDonationType"
               id="select-donation-type"
               v-model="current_donation.donation_type_id"
               class="form-select block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
-              aria-label="Default select example"
+              aria-label="Donation Types"
+              :class="{ '!border-red' : errors && errors.donation_type_id}"
+             
             >
             <option value="">Select Donation Type</option>
             <option v-for="(type,index) in donation_types.donation_types" :key="'type_'+ index" :value="type.id">{{ type.name }}</option>
@@ -82,11 +85,6 @@
                   }"
                   class="select-none flex px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none hover:bg-gray-50 peer-checked:ring-green dark:peer-checked:ring-black peer-checked:ring-2 peer-checked:border-transparent" 
                   :for="'frequency_'+index">{{ frequency.name }}</label>
-                  <!-- <div class="absolute w-full h-5 top-0 right-0" 
-                  :class="{ 
-                    'block':checkIfAllowed(frequency.name),
-                    'hidden':!checkIfAllowed(frequency.name)
-                   }">Frequency not allow for current project</div> -->
                 </li>
               </template>
             </ul>
@@ -115,6 +113,7 @@
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
               id="other-amount"
               placeholder="Other Amount"
+              :class="{ 'border !border-red-500' : errors && errors.donation_amount}"
             />
           </div>
 
@@ -187,7 +186,15 @@ export default {
   },
   methods: {
     projectChanged() {
-      this.current_donation.monthly = null
+      if(this.current_donation.project.default_frequency == 'monthly'){
+        if(this.checkIfAllowed("Monthly")){
+          this.current_donation.monthly = true
+        }
+      }else{
+        if(this.checkIfAllowed("Single")){
+          this.current_donation.monthly = false
+        }
+      }
     },
     checkIfAllowed(frequency) {
       if (this.current_donation && this.current_donation.project) {
@@ -293,7 +300,7 @@ export default {
 
       if (this.current_donation.amount == 0 || !this.current_donation.amount) {
         if (!this.current_donation.fix_amount) {
-          this.errors.donation_type_id = "Please Enter Amount.";
+          this.errors.donation_amount = "Please Enter Amount.";
           this.validated = false;
         }
       }

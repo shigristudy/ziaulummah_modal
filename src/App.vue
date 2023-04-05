@@ -259,6 +259,8 @@ function donationAdded(donation) {
     state.donations[state.selectedItem] = state.current_donation;
     state.selectedItem = null;
   }
+
+  viewBasket();
 }
 
 function toggleCustomProject(type, selected) {

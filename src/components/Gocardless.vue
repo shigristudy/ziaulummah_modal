@@ -19,6 +19,11 @@
       </svg>
       <br>
     </div>
+
+    <div class="flex justify-center mt-2" v-if="loading">
+      <button @click="loading = false" class="px-6 pt-2.5 pb-2 bg-yellow-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-600 active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">Cancel</button>
+    </div>
+
     <div class="my-6 flex justify-between" v-if="!loading && !paymentCompleted">
       <button type="button" @click="moveBack()" class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 mr-3">
@@ -69,16 +74,31 @@ export default {
     },
     async generateGocardlessHostedUrl(payload) {
       const { data } = await Api.gocardlessHostedUrl({ donation_id: payload })
-      window.open(data.redirect_url,'_blank');
+      this.openNewWindowForGocardless(data.redirect_url)
+      // window.open(data.redirect_url,'_blank');
+    },
+    openNewWindowForGocardless(hosted_url){
+      // Get the screen width and height
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height;
+
+      // Calculate the center position
+      const width = 600; // Replace with your desired width
+      const height = 600; // Replace with your desired height
+      const left = (screenWidth - width) / 2;
+      const top = (screenHeight - height) / 2;
+
+      // Open the window
+      window.open(hosted_url, 'gocardless_checkout', `width=${width},height=${height},left=${left},top=${top}`);
     },
     async saveDonation(token) {
+      
       this.loading = true
       this.form.donations = this.donations
       let { data } = await Api.saveDonation(this.form);
       if (data.success == 0) {
         this.loading = false
         this.error_message = data.message
-        console.log(data.message)
         return;
       }
 
