@@ -487,7 +487,7 @@
               v-model="form.gift_aid"
               :value="1"
             />
-            <label for="agreed" class="ml-1 required"
+            <label for="agreed" class="ml-1"
               >I agree, I would like to boost my donation with Gift Aid
             </label>
           </div>
@@ -548,7 +548,7 @@
             v-model="form.terms_agreement"
             :value="1"
           />
-          <label for="synergidigital-accept-terms-business" class="ml-1">
+          <label for="synergidigital-accept-terms-business" class="ml-1 required">
             By checking this box, you are agreeing to our
             <a target="__blank" :href="policyLink" class="text-red"
               >terms of service</a
@@ -557,7 +557,7 @@
         </div>
         <hr />
         <div class="mt-4">
-          <p class="font-bold">Choose Payment Method</p>
+          <p class="font-bold required">Choose Payment Method</p>
 
           <div class="flex gap-6 flex-col">
             <div
@@ -622,13 +622,14 @@
           </div>
         </div>
         <ul v-if="errors" class="list-disc px-6 border-t mt-2 pt-2" ref="errorsRefs">
-          <li
+          <li class="text-red">Please fill in all of the required(*) fields</li>
+          <!-- <li
             class="text-red"
             v-for="(error, index) in errors"
             :key="'error' + index"
           >
             {{ error }}
-          </li>
+          </li> -->
         </ul>
         <div class="my-6 flex justify-between">
           <button

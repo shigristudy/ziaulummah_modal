@@ -195,6 +195,12 @@ export default {
           this.current_donation.monthly = false
         }
       }
+      // Set Fix Amount First One
+      let amounts = ( this.current_donation.project && this.current_donation.project.fix_amounts) ? this.current_donation.project.fix_amounts.split(',') : []
+
+      if(amounts.length > 0){
+        this.current_donation.fix_amount = amounts[0]
+      }
     },
     checkIfAllowed(frequency) {
       if (this.current_donation && this.current_donation.project) {
