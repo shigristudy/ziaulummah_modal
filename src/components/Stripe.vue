@@ -59,7 +59,7 @@
 <script>
 import Api from "../services/api";
 export default {
-  props: ["amount","customer","stripePublicKey"],
+  props: ["amount","customer","stripePublicKey","donations"],
   data() {
     return {
       card: {
@@ -86,15 +86,12 @@ export default {
       url: import.meta.env.VITE_WEB_URL,
       client_secret: '',
       card: null,
-      payment_intent: null
+      payment_intent: null,
     };
   },
 
   mounted() {
-    // Create Payment Intent
-    // console.log(this.amount)
     this.createStripeIntent()
-    // Get Payment Details
   },
 
   methods: {
@@ -159,12 +156,80 @@ export default {
         } else {
           if (result.paymentIntent.status === 'succeeded') {
             vm.stripeSuccess = "payment successfully completed."
-            vm.$emit("stripePayment", vm.payment_intent);
-            vm.loading = false
+            vm.handleStripePayment(vm.payment_intent)
+            // vm.$emit("stripePayment", vm.payment_intent);
+            // vm.loading = false
           }
           return false;
         }
       });
+    },
+
+    async handleStripePayment(payment_intent) {
+      this.customer.donations = this.donations
+      console.log(this.customer)
+      // return
+      let { data } = await Api.saveDonation(this.customer);
+      
+      if (data.success == true) {
+        let payment = {};
+        payment.payment_intent = payment_intent;
+        payment.name = this.customer.first_name;
+        payment.email = this.customer.email;
+        payment.amount = { monthly: 0, single: 0 };
+        payment.donor = data.donor;
+        payment.currency = data.currency;
+        // payment.donation = data.donation;
+        payment.monthly_donation = data.monthly_donation;
+        payment.one_off_donation = data.one_off_donation;
+
+        this.donations.map((f) => {
+          if (f.monthly) {
+            if (f.amount) {
+              payment.amount.monthly += f.amount;
+            } else {
+              payment.amount.monthly += f.fix_amount;
+            }
+          }
+          if (!f.monthly) {
+            if (f.amount) {
+              payment.amount.single += f.amount;
+            } else {
+              payment.amount.single += f.fix_amount;
+            }
+          }
+        });
+        let pay = await Api.makePayment(payment);
+        if (pay.data.success) {
+
+          if(
+            pay.data.subscription 
+            && pay.data.subscription.latest_invoice 
+            && pay.data.subscription.payment_intent
+          ){
+            // console.log(pay.data.subscription.payment_intent.client_secret)
+
+            this.stripe.confirmCardPayment(pay.data.subscription.payment_intent.client_secret, {
+              payment_method: {
+                card: this.card,
+                billing_details: {
+                  name: this.customer.name,
+                  email: this.customer.email
+                }
+              },
+              setup_future_usage: 'off_session'
+            }).then(function (result) {
+              if (result.paymentIntent.status === 'succeeded') {
+                this.loading = false
+              }
+            })
+          }
+          // this.initAgain();
+          // this.moveForward()
+        } else {
+          this.errors.authentication = pay.data.message
+        }
+      }
     },
 
     listenForErrors() {

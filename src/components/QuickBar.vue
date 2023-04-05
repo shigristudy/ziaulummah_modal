@@ -115,7 +115,14 @@ export default {
       return this.donations.every((item) => !item.monthly)
     },
     frequencies() {
-
+      return [{
+          name: 'Single',
+          selected: false
+      },{
+          name: 'Monthly',
+          selected: true
+      }] 
+      
       if (this.all_monthly) {
         return [{
             name: 'Monthly',

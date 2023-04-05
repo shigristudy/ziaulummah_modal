@@ -451,6 +451,7 @@
           :amount="totalAmount"
           :stripePublicKey="getGatewayPublicKey('stripe')"
           :customer="form"
+          :donations="donations"
         />
 
         <!-- <div class="my-6 flex justify-between">
@@ -632,11 +633,11 @@ export default {
       this.form.donations = this.donations
       let { data } = await Api.saveDonation(this.form);
       if (data.success) {
-        this.initAgain();
-        this.moveForward()
+        // this.initAgain();
+        // this.moveForward()
       }
 
-      return;
+      // return;
       if (data.success == true) {
         let payment = {};
         payment.payment_intent = payment_intent;
@@ -668,6 +669,14 @@ export default {
         let pay = await Api.makePayment(payment);
         console.log(pay)
         if (pay.data.success) {
+
+          if(
+            pay.data.subscription 
+            && pay.data.subscription.latest_invoice 
+            && pay.data.subscription.payment_intent
+          ){
+            console.log(pay.data.subscription.payment_intent.client_secret)
+          }
           // this.initAgain();
           // this.moveForward()
         } else {
