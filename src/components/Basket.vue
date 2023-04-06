@@ -336,7 +336,7 @@
               >
                 Your Donation
               </h2>
-              <p>See the details of your donation below:</p>
+              <p>Please fill in all of the required fields below:</p>
             </div>
           </div>
         </div>
@@ -621,15 +621,8 @@
             </div>
           </div>
         </div>
-        <ul v-if="errors" class="list-disc px-6 border-t mt-2 pt-2" ref="errorsRefs">
-          <li class="text-red">Please fill in all of the required(*) fields</li>
-          <!-- <li
-            class="text-red"
-            v-for="(error, index) in errors"
-            :key="'error' + index"
-          >
-            {{ error }}
-          </li> -->
+        <ul v-if="Object.keys(errors).length" class="mt-2 pt-2 border-b-2 border-red list-none" ref="errorsRefs">
+          <li class="text-red font-bold">Please fill in all of the required(*) fields</li>
         </ul>
         <div class="my-6 flex justify-between">
           <button
