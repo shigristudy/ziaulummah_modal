@@ -167,11 +167,10 @@ export default {
 
     async handleStripePayment(payment_intent) {
       this.customer.donations = this.donations
-      console.log(this.customer)
-      // return
+      
       let { data } = await Api.saveDonation(this.customer);
       
-      if (data.success == true) {
+      if (data.success) {
         let payment = {};
         payment.payment_intent = payment_intent;
         payment.name = this.customer.first_name;
@@ -199,17 +198,24 @@ export default {
             }
           }
         });
-        let pay = await Api.makePayment(payment);
-        if (pay.data.success) {
 
+        this.subscriptionIntentHandle(payment)
+      }
+    },
+
+
+    async subscriptionIntentHandle(payment){
+      let { data } = await Api.makePayment(payment);
+        if (data.success) {
+          // console.log(data.subscription)
           if(
-            pay.data.subscription 
-            && pay.data.subscription.latest_invoice 
-            && pay.data.subscription.payment_intent
+            data.subscription 
+            && data.subscription.latest_invoice 
+            && data.subscription.latest_invoice.payment_intent
           ){
-            // console.log(pay.data.subscription.payment_intent.client_secret)
+            console.log(data.subscription.latest_invoice.payment_intent.client_secret)
 
-            this.stripe.confirmCardPayment(pay.data.subscription.payment_intent.client_secret, {
+            this.stripe.confirmCardPayment(data.subscription.latest_invoice.payment_intent.client_secret, {
               payment_method: {
                 card: this.card,
                 billing_details: {
@@ -227,11 +233,9 @@ export default {
           // this.initAgain();
           // this.moveForward()
         } else {
-          this.errors.authentication = pay.data.message
+          this.errors.authentication = data.message
         }
-      }
     },
-
     listenForErrors() {
       const vm = this;
 
