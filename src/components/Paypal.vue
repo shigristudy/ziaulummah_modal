@@ -83,7 +83,7 @@ export default {
       }
 
       this.donations.map((donation, index) => {
-        let amount = (donation.amount) ? donation.amount : donation.fix_amount 
+        let amount = (donation.amount) ? donation.amount * donation.qty : donation.fix_amount * donation.qty 
         this.purchase_units.push({
           reference_id: this.getReferenceId(donation.project,index),
           description: donation.project.title,

@@ -201,6 +201,8 @@ export default {
       if(amounts.length > 0){
         this.current_donation.fix_amount = parseFloat(amounts[0])
       }
+
+      this.current_donation.donation_type_id = (this.donation_types.donation_types) ? this.donation_types.donation_types[0].id : null
     },
     checkIfAllowed(frequency) {
       if (this.current_donation && this.current_donation.project) {
@@ -256,16 +258,10 @@ export default {
 
       const { data } = await Api.fetchProjects(this.current_donation.category_id)
       this.projects = data.projects
-      // this.current_donation.project_id 
-
-      // const pagedProject = this.projects.find((value, index) => {
-      //   return value.wordpress_page_id == this.wordpress_page_id
-      // })
-      
-      // if (!pagedProject) return;
-
-      // this.current_donation.project_id = pagedProject.id
-      // this.current_donation.project = pagedProject
+      this.current_donation.project_id = (this.projects) ? this.projects[0].id : null
+      setTimeout(() => {
+        this.projectChanged()
+      }, 500);
     },
     addDonation() {
       
