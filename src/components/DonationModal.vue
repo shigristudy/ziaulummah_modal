@@ -258,10 +258,10 @@ export default {
 
       const { data } = await Api.fetchProjects(this.current_donation.category_id)
       this.projects = data.projects
-      this.current_donation.project_id = (this.projects) ? this.projects[0].id : null
-      setTimeout(() => {
-        this.projectChanged()
-      }, 500);
+      // this.current_donation.project_id = (this.projects) ? this.projects[0].id : null
+      // setTimeout(() => {
+      //   this.projectChanged()
+      // }, 500);
     },
     addDonation() {
       

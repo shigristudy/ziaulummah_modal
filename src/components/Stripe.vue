@@ -146,7 +146,7 @@ export default {
         payment_method: {
           card: this.card,
           billing_details: {
-            name: this.customer.name,
+            name: (this.customer.first_name + ' ' + this.customer.last_name).trim(),
             email: this.customer.email
           }
         },

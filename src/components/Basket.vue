@@ -885,7 +885,9 @@ export default {
     async stripePayment(payment_intent) {
       this.form.donations = this.donations;
       let { data } = await Api.saveDonation(this.form);
+      console.log(data)
       if (data.success) {
+        console.log("here")
         this.initAgain();
         this.moveForward();
       }
