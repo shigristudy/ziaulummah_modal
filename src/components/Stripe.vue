@@ -44,15 +44,16 @@
         </button>
       </div>
       <div>
-        <p class="text-red" v-if="stripeError">
-          {{ stripeError }}
-        </p>
-      </div>
-      <div>
         <p class="text-green" v-if="stripeSuccess">
           {{ stripeSuccess }}
         </p>
       </div>
+      <div>
+        <p class="text-red" v-if="stripeError">
+          {{ stripeError }}
+        </p>
+      </div>
+      
     </form>
   </div>
 </template>
@@ -158,9 +159,9 @@ export default {
           vm.loading = false
         } else {
           if (result.paymentIntent.status === 'succeeded') {
-            vm.stripeSuccess = "payment successfully completed."
+            vm.stripeSuccess = "Payment Collected Successfully... Redirecting..."
             vm.$emit("stripePayment", vm.payment_intent);
-            vm.loading = false
+            // vm.loading = false
           }
           return false;
         }

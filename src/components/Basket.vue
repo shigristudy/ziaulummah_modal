@@ -445,7 +445,7 @@
               </p>
             </div>
             <div class="w-1/4">
-              <img :src="assets('sign.png')" />
+              <img :src="assets('company/sign.png')" />
             </div>
           </div>
           <div class="font-normal text-sm bg-gray-200 p-3 mb-2">
@@ -690,6 +690,7 @@
           @moveBack="moveBack()"
           @stripePayment="stripePayment"
           :amount="totalAmount"
+          ref="stripeComponent"
           :stripePublicKey="getGatewayPublicKey('stripe')"
           :customer="form"
         />
@@ -884,51 +885,15 @@ export default {
     },
     async stripePayment(payment_intent) {
       this.form.donations = this.donations;
-      let { data } = await Api.saveDonation(this.form);
-      console.log(data)
-      if (data.success) {
-        console.log("here")
-        this.initAgain();
-        this.moveForward();
-      }
-
-      return;
-      if (data.success == true) {
-        let payment = {};
-        payment.payment_intent = payment_intent;
-        payment.name = this.form.first_name;
-        payment.email = this.form.email;
-        payment.amount = { monthly: 0, single: 0 };
-        payment.donor = data.donor;
-        payment.currency = data.currency;
-        // payment.donation = data.donation;
-        payment.monthly_donation = data.monthly_donation;
-        payment.one_off_donation = data.one_off_donation;
-
-        this.donations.map((f) => {
-          if (f.monthly) {
-            if (f.amount) {
-              payment.amount.monthly += f.amount;
-            } else {
-              payment.amount.monthly += f.fix_amount;
-            }
-          }
-          if (!f.monthly) {
-            if (f.amount) {
-              payment.amount.single += f.amount;
-            } else {
-              payment.amount.single += f.fix_amount;
-            }
-          }
-        });
-        let pay = await Api.makePayment(payment);
-        console.log(pay);
-        if (pay.data.success) {
-          // this.initAgain();
-          // this.moveForward()
-        } else {
-          this.errors.authentication = pay.data.message;
+      try{
+        let { data } = await Api.saveDonation(this.form);
+        if (data.success) {
+          this.initAgain();
+          this.moveForward();
         }
+      }catch(e){
+        this.$refs.stripeComponent.loading = false
+        this.$refs.stripeComponent.stripeError = 'Something Went Wrong while Storing Donation.';
       }
     },
     async PaypalPaymentSuccess(response) {
