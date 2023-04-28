@@ -685,7 +685,7 @@
           :donations="donations"
         />
 
-        <Stripe
+        <StripeCustom
           v-else
           @moveBack="moveBack()"
           @stripePayment="stripePayment"
@@ -694,6 +694,15 @@
           :stripePublicKey="getGatewayPublicKey('stripe')"
           :customer="form"
         />
+        <!-- <Stripe
+          v-else
+          @moveBack="moveBack()"
+          @stripePayment="stripePayment"
+          :amount="totalAmount"
+          ref="stripeComponent"
+          :stripePublicKey="getGatewayPublicKey('stripe')"
+          :customer="form"
+        /> -->
 
         <!-- <div class="my-6 flex justify-between">
           <button type="button" @click="moveBack()" class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
@@ -739,6 +748,7 @@ import IconPaypalCard from "../components/icons/IconPaypalCard.vue";
 import IconCheck from "../components/icons/IconCheck.vue";
 import Paypal from "../components/Paypal.vue";
 import Stripe from "../components/Stripe.vue";
+import StripeCustom from "../components/Stripe_inline_form.vue";
 import Gocardless from "../components/Gocardless.vue";
 export default {
   props: ["donations", "form", "stripePublicKey", "currencies", "gateways"],
@@ -749,6 +759,7 @@ export default {
     Stripe,
     Paypal,
     Gocardless,
+    StripeCustom
   },
   data() {
     return {
