@@ -66,5 +66,8 @@ export default {
   },
   createStripeIntentRequest(payload) {
     return axios.post(url('stripe/payment/intent'), payload);
+  },
+  gocardlessCancelDonation(payload) { 
+    return axios.post(url('gocardless/cancel-donation'), payload);
   }
 };

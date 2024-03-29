@@ -21,7 +21,7 @@
     </div>
 
     <div class="flex justify-center mt-2" v-if="loading">
-      <button @click="loading = false" class="px-6 pt-2.5 pb-2 bg-yellow-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-600 active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">Cancel</button>
+      <button @click="cancelCurrentSession" class="px-6 pt-2.5 pb-2 bg-yellow-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-yellow-600 hover:shadow-lg focus:bg-yellow-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-yellow-600 active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">Cancel</button>
     </div>
 
     <div class="my-6 flex justify-between" v-if="!loading && !paymentCompleted">
@@ -60,7 +60,8 @@ export default {
       paymentCompleted: false,
       url: import.meta.env.VITE_WEB_URL,
       auth_url: import.meta.env.VITE_APP_URL,
-      error_message:''
+      error_message: '',
+      donation_id: null
     };
   },
 
@@ -69,6 +70,10 @@ export default {
   },
 
   methods: {
+    async cancelCurrentSession() {
+      this.loading = false
+      const { data } = await Api.gocardlessCancelDonation({donation_id: this.donation_id})
+    },
     moveBack() {
       this.$emit('moveBack')
     },
@@ -89,7 +94,20 @@ export default {
       const top = (screenHeight - height) / 2;
 
       // Open the window
-      window.open(hosted_url, 'gocardless_checkout', `width=${width},height=${height},left=${left},top=${top}`);
+      // window.open(hosted_url, 'gocardless_checkout', `width=${width},height=${height},left=${left},top=${top}`);
+
+      const win = window.open(hosted_url, 'gocardless_checkout', `width=${width},height=${height},left=${left},top=${top}`);
+
+      // Polling function to check if window is closed
+      const checkWindowClosed = () => {
+        if (win.closed) {
+          clearInterval(intervalId);
+          // Perform your action here, like updating the parent window
+          console.log('Gocardless checkout window closed!');
+        }
+      };
+
+      const intervalId = setInterval(checkWindowClosed, 1000);
     },
     async saveDonation(token) {
       
@@ -104,6 +122,7 @@ export default {
 
       this.error_message = ""
       if (data?.monthly_donation) {
+        this.donation_id = data.monthly_donation.id
         this.pusherGocardlessLister(data.monthly_donation.id)
         this.generateGocardlessHostedUrl(data.monthly_donation.id)
       } else {
