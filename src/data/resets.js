@@ -12,6 +12,7 @@ let current_donation = {
 }
 
 let form = {
+    title: 'Mr',
     first_name: null,
     last_name: null,
     address_line_1: null,

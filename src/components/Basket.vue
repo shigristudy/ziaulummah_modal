@@ -204,6 +204,22 @@
         </div>
         <hr />
         <p class="my-4">Personal Information</p>
+        <div class="grid">
+          <select name="title" id="" placeholder="Title" v-model="form.title"
+          :class="[errors && errors.title ? '!border-red' : 'border-gray-300']"
+            class="appearance-none row-start-1 col-start-1 mb-2 form-select block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none">
+            <option value="Mr">Mr</option>
+            <option value="Mrs">Mrs</option>
+          </select>
+          <svg
+            class="pointer-events-none z-10 right-1 relative col-start-1 row-start-1 h-4 w-4 self-center justify-self-end forced-colors:hidden"
+            viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd"
+              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-red text-lg top-1/2 right-3 -translate-y-1/2 leading-[1] absolute">*</span>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
           <div class="relative">
             <input placeholder="First Name" v-model="form.first_name"
@@ -545,6 +561,10 @@ export default {
       this.errors = {};
       let validated = true;
       if (this.step == 2) {
+        if (!this.form.title) {
+          this.errors.title = "Title is required.";
+          validated = false;
+        }
         if (!this.form.first_name) {
           this.errors.first_name = "First Name  is required.";
           validated = false;
