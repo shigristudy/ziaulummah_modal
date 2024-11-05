@@ -69,5 +69,8 @@ export default {
   },
   gocardlessCancelDonation(payload) { 
     return axios.post(url('gocardless/cancel-donation'), payload);
+  },
+  setupDirectDebit(payload) {
+    return axios.post(url('gocardless/setup-direct-debit'), payload);
   }
 };
