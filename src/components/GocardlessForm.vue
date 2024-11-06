@@ -2,7 +2,7 @@
     <div :class="{
         'flex': loading,
         'hidden': !loading
-    }" class="bg-green  items-center justify-center flex-col">
+    }" class="bg-green items-center justify-center flex-col">
         <h1 class="text-white font-bold p-6">
             Waiting for Payment Process ....
         </h1>
@@ -21,29 +21,43 @@
     <form v-if="!loading" class="flex flex-col items-center justify-center">
         <div
             class="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="account_number">
-                    Account Number
-                </label>
-                <input
-                    class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none w-49"
-                    id="account_number" @keydown="onlyNumeric($event, 8)" type="text" placeholder="Account Number"
-                    v-model="form.account_number">
-                <span class="text-red" v-if="errors.account_number">{{ errors.account_number[0] }}</span>
+            <div v-if="form.payment_method === 'account'">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="account_number">
+                        Account Number
+                    </label>
+                    <input
+                        class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none w-49"
+                        id="account_number" @keydown="onlyNumeric($event, 8)" type="text" placeholder="Account Number"
+                        v-model="form.account_number">
+                    <span class="text-red" v-if="errors.account_number">{{ errors.account_number[0] }}</span>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sort_code">
+                        Sort Code
+                    </label>
+                    <input
+                        class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none w-49"
+                        id="sort_code" type="text" @keydown="onlyNumeric($event, 6)" placeholder="Sort Code"
+                        v-model="form.sort_code">
+                    <span class="text-red" v-if="errors.sort_code">{{ errors.sort_code[0] }}</span>
+                </div>
+                <a href="#" class="text-blue-500 mb-4" @click.prevent="togglePaymentMethod">or enter IBAN number instead</a>
             </div>
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="sort_code">
-                    Sort Code
-                </label>
-                <input
-                    class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none w-49"
-                    id="sort_code" type="text" @keydown="onlyNumeric($event, 6)" placeholder="Sort Code"
-                    v-model="form.sort_code">
-                <span class="text-red" v-if="errors.sort_code">{{ errors.sort_code[0] }}</span>
+            <div v-else>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="iban">
+                        IBAN
+                    </label>
+                    <input
+                        class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none w-49"
+                        id="iban" type="text" placeholder="IBAN" v-model="form.iban">
+                    <span class="text-red" v-if="errors.iban || errors.customer_bank_account">{{ errors.iban ? errors.iban[0] : errors.customer_bank_account[0] }}</span>
+                </div>
+                <a href="#" class="text-blue-500 mb-4" @click.prevent="togglePaymentMethod">or enter Account Number & Sort Code instead</a>
             </div>
-
             <!-- day_of_month -->
-            <!-- <div class="mb-6">
+            <!-- <div class="my-6">
                 <label class="block text-gray-700 text-sm font-bold" for="day_of_month">
                     Day of Month
                 </label>
@@ -55,7 +69,6 @@
                     <option v-for="i in 28" :value="i">{{ ordinalSuffix(i) }}</option>
                 </select>
             </div> -->
-
             <div class="my-6 flex justify-between">
                 <button type="button" @click="moveBack()"
                     class="px-6 pt-2.5 pb-2 bg-gray-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-green hover:shadow-lg focus:bg-green focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green active:shadow-lg transition duration-300 ease-in-out flex align-center items-center">
@@ -85,17 +98,15 @@
                         </circle>
                     </svg>
                 </button>
-
             </div>
         </div>
-
         <div>
             <p class="text-green" v-if="successMessage">
                 {{ successMessage }}
             </p>
         </div>
         <div>
-            <p class="text-red" v-if="errorMessage || errors.gocardless">
+            <p class="text-red" v-if="(errorMessage || errors.gocardless)">
                 {{ errorMessage || errors.gocardless[0] }}
             </p>
         </div>
@@ -103,7 +114,6 @@
 </template>
 
 <script setup>
-
 import { onMounted, ref, toRefs } from 'vue';
 import Api from "../services/api";
 const emit = defineEmits(["moveBack", "completed"]);
@@ -114,18 +124,20 @@ const errorMessage = ref('');
 const loading = ref(false);
 const errors = ref([]);
 const form = ref({
+    payment_method: 'account',
     account_number: '',
     sort_code: '',
+    iban: '',
     day_of_month: null
 });
 
 onMounted(() => {
-
+    // Any initialization logic can go here
 });
 
 const onlyNumeric = (e, maxLength) => {
     try {
-        if (maxLength && e.target.value.length >= maxLength && e.key !== 'Backspace') {
+        if (maxLength && e.target.value.length >= maxLength && e.key !== 'Backspace' && e.key !== 'Tab') {
             e.preventDefault();
             return;
         }
@@ -133,10 +145,9 @@ const onlyNumeric = (e, maxLength) => {
             e.preventDefault();
         }
     } catch (error) {
-
+        console.error(error);
     }
 }
-
 
 const ordinalSuffix = (i) => {
     const j = i % 10,
@@ -155,7 +166,7 @@ const ordinalSuffix = (i) => {
 
 const setupDirectDebit = async () => {
     try {
-        const { data } = await Api.setupDirectDebit({
+        const payload = {
             amount: amount.value,
             currency: customer.value.selected_currency,
             first_name: customer.value.first_name,
@@ -167,21 +178,27 @@ const setupDirectDebit = async () => {
             city: customer.value.city,
             country_code: getCountryCode(customer.value.country),
             post_code: customer.value.post_code,
-            account_number: form.value.account_number,
-            sort_code: form.value.sort_code,
             day_of_month: form.value.day_of_month,
             id: localStorage.getItem('donation_id')
-        })
+        };
+
+        if (form.value.payment_method === 'account') {
+            payload.account_number = form.value.account_number;
+            payload.sort_code = form.value.sort_code;
+        } else {
+            payload.iban = form.value.iban;
+        }
+
+        const { data } = await Api.setupDirectDebit(payload);
 
         successMessage.value = data.data.message;
         localStorage.removeItem('donation_id');
         emit('completed');
     } catch (error) {
-        console.log(error.response.data)
-
-        errors.value = error.response.data.errors
+        console.log(error.response.data);
+        errors.value = error.response.data.errors;
         loading.value = false;
-        errorMessage.value = error.response.data.data.message;
+        errorMessage.value = error.response.data.message;
     }
 }
 
@@ -200,31 +217,31 @@ const moveBack = () => {
 }
 
 const handleFormSubmit = async () => {
-
-    loading.value = true
+    loading.value = true;
     if (localStorage.getItem('donation_id') === null) {
         await saveDonation();
     }
-
     setupDirectDebit();
 }
 
 const saveDonation = async () => {
-
-    customer.value.donations = donations
+    customer.value.donations = donations;
     let { data } = await Api.saveDonation(customer.value);
     if (data.success == 0) {
-        loading.value = false
-        errorMessage.value = data.message
+        loading.value = false;
+        errorMessage.value = data.message;
         return;
     }
 
     if (data?.monthly_donation) {
-        let donation_id = data.monthly_donation.id
-        localStorage.setItem('donation_id', donation_id)
+        let donation_id = data.monthly_donation.id;
+        localStorage.setItem('donation_id', donation_id);
     } else {
-        console.error('something went Wrong')
+        console.error('something went wrong');
     }
 }
 
+const togglePaymentMethod = () => {
+    form.value.payment_method = form.value.payment_method === 'account' ? 'iban' : 'account';
+}
 </script>
