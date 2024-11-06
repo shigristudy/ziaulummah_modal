@@ -440,8 +440,18 @@
           :form="form" :currencies="currencies" :amount="totalAmount" @PaymentFailed="PaypalPaymentFailed"
           @PaymentSuccess="PaypalPaymentSuccess" v-if="form.payment_type == 'PayPal'" />
 
-        <Gocardless v-else-if="form.payment_type == 'Gocardless'" @moveBack="moveBack()"
-          @completed="goCardlesscompleted" :amount="totalAmount" :form="form" :donations="donations" />
+        <!-- <Gocardless
+          v-else-if="form.payment_type == 'Gocardless'"
+          @moveBack="moveBack()"
+          @completed="goCardlesscompleted"
+          :amount="totalAmount"
+          :form="form"
+          :donations="donations"
+        /> -->
+
+        <GocardlessForm v-else-if="form.payment_type == 'Gocardless'" @moveBack="moveBack()"
+          @completed="goCardlesscompleted" :amount="totalAmount" :customer="form" ref="gocardlessComponent"
+          :donations="donations" />
 
         <StripeCustom v-else @moveBack="moveBack()" @stripePayment="stripePayment" :amount="totalAmount"
           ref="stripeComponent" :stripePublicKey="getGatewayPublicKey('stripe')" :customer="form" />
@@ -495,6 +505,7 @@ import Paypal from "../components/Paypal.vue";
 import Stripe from "../components/Stripe.vue";
 import StripeCustom from "../components/Stripe_inline_form.vue";
 import Gocardless from "../components/Gocardless.vue";
+import GocardlessForm from "./GocardlessForm.vue";
 export default {
   props: ["donations", "form", "stripePublicKey", "currencies", "gateways"],
   components: {
@@ -504,7 +515,8 @@ export default {
     Stripe,
     Paypal,
     Gocardless,
-    StripeCustom
+    StripeCustom,
+    GocardlessForm
   },
   data() {
     return {
@@ -637,11 +649,9 @@ export default {
       const propsUpdatedEvent = new Event("propsUpdated");
       window.dispatchEvent(propsUpdatedEvent);
     },
-    goCardlesscompleted(res) {
-      // if (pay.data.success) {
+    async goCardlesscompleted(res) {
       this.initAgain();
       this.moveForward();
-      // }
     },
     async stripePayment(payment_intent) {
       this.form.donations = this.donations;
