@@ -440,18 +440,18 @@
           :form="form" :currencies="currencies" :amount="totalAmount" @PaymentFailed="PaypalPaymentFailed"
           @PaymentSuccess="PaypalPaymentSuccess" v-if="form.payment_type == 'PayPal'" />
 
-        <!-- <Gocardless
+        <Gocardless
           v-else-if="form.payment_type == 'Gocardless'"
           @moveBack="moveBack()"
           @completed="goCardlesscompleted"
           :amount="totalAmount"
           :form="form"
           :donations="donations"
-        /> -->
+        />
 
-        <GocardlessForm v-else-if="form.payment_type == 'Gocardless'" @moveBack="moveBack()"
+        <!-- <GocardlessForm v-else-if="form.payment_type == 'Gocardless'" @moveBack="moveBack()"
           @completed="goCardlesscompleted" :amount="totalAmount" :customer="form" ref="gocardlessComponent"
-          :donations="donations" />
+          :donations="donations" /> -->
 
         <StripeCustom v-else @moveBack="moveBack()" @stripePayment="stripePayment" :amount="totalAmount"
           ref="stripeComponent" :stripePublicKey="getGatewayPublicKey('stripe')" :customer="form" />
