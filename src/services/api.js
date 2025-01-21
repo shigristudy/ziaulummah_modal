@@ -12,11 +12,11 @@ if (document.getElementById("synergy-donationModal")) {
   clientId = document
     .getElementById("synergy-donationModal")
     .getAttribute("data-client-id");
-  
-    website = document
+
+  website = document
     .getElementById("synergy-donationModal")
     .getAttribute("data-website");
-  
+
 }
 
 // Request interceptor
@@ -67,10 +67,21 @@ export default {
   createStripeIntentRequest(payload) {
     return axios.post(url('stripe/payment/intent'), payload);
   },
-  gocardlessCancelDonation(payload) { 
+  gocardlessCancelDonation(payload) {
     return axios.post(url('gocardless/cancel-donation'), payload);
   },
   setupDirectDebit(payload) {
     return axios.post(url('gocardless/setup-direct-debit'), payload);
-  }
+  },
+  // Stripe Direct Debit
+  createStripeIntentRequestBasc(payload) {
+    return axios.post(url('stripe/intent/bacs'), payload);
+  },
+  completeSubscription(data) {
+    return axios.post(url('stripe/complete-subscription'), data);
+  },
+  createStripeSetupIntentRequestBacs(data) {
+    return axios.post(url('stripe/setup-intent'), data);
+  },
+
 };

@@ -440,14 +440,31 @@
           :form="form" :currencies="currencies" :amount="totalAmount" @PaymentFailed="PaypalPaymentFailed"
           @PaymentSuccess="PaypalPaymentSuccess" v-if="form.payment_type == 'PayPal'" />
 
-        <Gocardless
+        <!-- <Gocardless
           v-else-if="form.payment_type == 'Gocardless'"
           @moveBack="moveBack()"
           @completed="goCardlesscompleted"
           :amount="totalAmount"
           :form="form"
           :donations="donations"
-        />
+        /> -->
+
+        <StripeDirectDebit v-else-if="form.payment_type == 'Gocardless'" 
+          @moveBack="moveBack()"
+          @stripePayment="stripeDirectDebitcompleted" 
+          :amount="totalAmount" 
+          :form="form" 
+          :stripePublicKey="getGatewayPublicKey('stripe')"
+          ref="stripeDirectDebitComponent"
+          :donations="donations" />
+          <!-- <SetupIntent v-else-if="form.payment_type == 'Gocardless'" 
+          @moveBack="moveBack()"
+          @completed="stripeDirectDebitcompleted" 
+          :amount="totalAmount" 
+          :form="form" 
+          :stripePublicKey="getGatewayPublicKey('stripe')"
+          ref="stripeDirectDebitComponent"
+          :donations="donations" /> -->
 
         <!-- <GocardlessForm v-else-if="form.payment_type == 'Gocardless'" @moveBack="moveBack()"
           @completed="goCardlesscompleted" :amount="totalAmount" :customer="form" ref="gocardlessComponent"
@@ -504,6 +521,8 @@ import IconCheck from "../components/icons/IconCheck.vue";
 import Paypal from "../components/Paypal.vue";
 import Stripe from "../components/Stripe.vue";
 import StripeCustom from "../components/Stripe_inline_form.vue";
+import StripeDirectDebit from "../components/StripeDirectDebit.vue";
+import SetupIntent from "../components/SetupIntent.vue";
 import Gocardless from "../components/Gocardless.vue";
 import GocardlessForm from "./GocardlessForm.vue";
 export default {
@@ -516,7 +535,9 @@ export default {
     Paypal,
     Gocardless,
     StripeCustom,
-    GocardlessForm
+    GocardlessForm,
+    StripeDirectDebit,
+    SetupIntent
   },
   data() {
     return {
@@ -650,6 +671,11 @@ export default {
       window.dispatchEvent(propsUpdatedEvent);
     },
     async goCardlesscompleted(res) {
+      this.initAgain();
+      this.moveForward();
+    },
+    async stripeDirectDebitcompleted() {
+      console.log("here")
       this.initAgain();
       this.moveForward();
     },
