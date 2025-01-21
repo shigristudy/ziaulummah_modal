@@ -7,3 +7,11 @@
     color: red;
     font-size: 14px;;
 }
+
+.vsp-overlay{
+    z-index: 100 !important;
+}
+
+.vsp.vsp--right-side{
+    z-index: 100 !important;
+}

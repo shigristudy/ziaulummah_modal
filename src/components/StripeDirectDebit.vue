@@ -30,7 +30,7 @@
         </div>
 
         <div class="block w-full px-3 py-1.5 bg-white border border-gray-300 rounded">
-          <div id="payment-element"></div>
+          <div id="payment-element" class="py-4"></div>
         </div>
 
         <div class="my-6 flex justify-between">
