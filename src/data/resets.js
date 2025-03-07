@@ -30,7 +30,7 @@ let form = {
     date: new Date().toJSON().slice(0, 10).replace(/-/g, '-'),
     paper_copy: false,
     admin_fee_cover: false,
-    terms_agreement: false,
+    terms_agreement: true,
     selected_currency: 'GBP',
     capture_url: window.location.href
 }

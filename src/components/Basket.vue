@@ -350,7 +350,7 @@
           </div>
         </div>
         <hr />
-        <div class="my-2 flex border border-green p-3"
+        <div class="my-2 flex border p-3 bg-black text-white"
           :class="{ '!border-red bg-red-light': errors && errors.terms_agreement }">
           <input id="synergidigital-accept-terms-business" type="checkbox" v-model="form.terms_agreement" :value="1" />
           <label for="synergidigital-accept-terms-business" class="ml-1 required">
