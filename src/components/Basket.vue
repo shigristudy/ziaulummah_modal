@@ -55,7 +55,7 @@
                             <button class="px-2 bg-gray-200 border-l border-gray-300" @click="donation.qty++">+</button>
                           </div>
                           <button @click="removeItem(index)" type="button"
-                            class="font-medium text-red hover:bg-transparent border-none p-0">
+                            class="font-medium text-red !bg-none border-none p-0">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                               stroke="currentColor" class="w-6 h-6">
                               <path stroke-linecap="round" stroke-linejoin="round"
