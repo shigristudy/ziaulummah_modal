@@ -19,7 +19,7 @@ let form = {
     address_line_2: null,
     city: null,
     post_code: null,
-    country: 0,
+    country: "United Kingdom",
     email: null,
     phone: null,
     reason: null,
