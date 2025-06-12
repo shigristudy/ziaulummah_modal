@@ -11,7 +11,7 @@
             <div class="mt-2 flex items-center">
               <label for="select-currency">Select Currency</label>
               <div class="grid">
-                <select v-model="form.selected_currency" @change="projectChanged"
+                <select :disabled="hasItemsInBasket" v-model="form.selected_currency" @change="projectChanged"
                   class="appearance-none row-start-1 col-start-1 w-20 ml-2 mt-1 form-select text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green dark:focus:border-black focus:outline-none"
                   name="currency" id="select-currency">
                   <option value="GBP">GBP</option>
@@ -27,6 +27,9 @@
                 </svg>
               </div>
             </div>
+            <p class="text-xs text-red mt-1" v-if="hasItemsInBasket">
+              Please empty basket first if you would like to change the currency
+            </p>
           </div>
         </div>
       </div>
@@ -216,7 +219,7 @@ export default {
   },
   methods: {
     projectChanged() {
-      if (this.current_donation.project.default_frequency == 'monthly') {
+      if (this.current_donation?.project?.default_frequency == 'monthly') {
         if (this.checkIfAllowed("Monthly")) {
           this.current_donation.monthly = true
         }
@@ -356,6 +359,9 @@ export default {
     },
   },
   computed: {
+    hasItemsInBasket() {
+      return this.donations.length > 0;
+    },
     donation_types() {
       if (!this.projects) return [];
       let obj = this.projects.find(o => o.id === this.current_donation.project_id);
