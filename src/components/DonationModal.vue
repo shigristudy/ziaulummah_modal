@@ -136,9 +136,9 @@
         </div>
 
         <div class="mb-4" v-if="current_donation.project && current_donation.project.is_other_amount_allowed">
-          <label for="other-amount" class="form-label inline-block mb-2 text-green dark:text-black font-bold">Other
-            Amount</label>
+          <label for="other-amount" class="form-label inline-block mb-2 text-green dark:text-black font-bold">Or Enter Another Amount</label>
           <input v-model="current_donation.amount" type="number"
+            min="0.1"
             class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
             id="other-amount" placeholder="Other Amount"
             :class="{ 'border !border-red-500': errors && errors.donation_amount }" />
@@ -308,8 +308,11 @@ export default {
       // }, 500);
     },
     addDonation() {
-
       if (!this.validateStep()) return
+
+      if (this.current_donation.amount === 0 || this.current_donation.amount === '' || this.current_donation.amount === '0') {
+        this.current_donation.amount = null;
+      }
 
       this.show_alert = true
       setTimeout(() => {
@@ -344,11 +347,20 @@ export default {
         this.validated = false;
       }
 
-      if (this.current_donation.amount == 0 || !this.current_donation.amount) {
-        if (!this.current_donation.fix_amount) {
-          this.errors.donation_amount = "Please Enter Amount.";
-          this.validated = false;
-        }
+      const customAmount = parseFloat(this.current_donation.amount);
+      const fixAmount = parseFloat(this.current_donation.fix_amount);
+      
+      if (this.current_donation.amount !== null && this.current_donation.amount !== '' && (isNaN(customAmount) || customAmount <= 0)) {
+        this.errors.donation_amount = `Please enter ${this.$formatAmount(1)} or more to make a donation`;
+        this.validated = false;
+      }
+      
+      const hasValidCustomAmount = !isNaN(customAmount) && customAmount > 0;
+      const hasValidFixAmount = !isNaN(fixAmount) && fixAmount > 0;
+
+      if (!hasValidCustomAmount && !hasValidFixAmount) {
+        this.errors.donation_amount = "Please Enter Amount.";
+        this.validated = false;
       }
 
       return this.validated
