@@ -138,7 +138,7 @@
         <div class="mb-4" v-if="current_donation.project && current_donation.project.is_other_amount_allowed">
           <label for="other-amount" class="form-label inline-block mb-2 text-green dark:text-black font-bold">Or Enter Another Amount</label>
           <input v-model="current_donation.amount" type="number"
-            min="0.1"
+            min="1"
             class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
             id="other-amount" placeholder="Other Amount"
             :class="{ 'border !border-red-500': errors && errors.donation_amount }" />
@@ -350,16 +350,16 @@ export default {
       const customAmount = parseFloat(this.current_donation.amount);
       const fixAmount = parseFloat(this.current_donation.fix_amount);
       
-      if (this.current_donation.amount !== null && this.current_donation.amount !== '' && (isNaN(customAmount) || customAmount <= 0)) {
+      if (this.current_donation.amount !== null && this.current_donation.amount !== '' && (isNaN(customAmount) || customAmount < 1)) {
         this.errors.donation_amount = `Please enter ${this.$formatAmount(1)} or more to make a donation`;
         this.validated = false;
       }
       
-      const hasValidCustomAmount = !isNaN(customAmount) && customAmount > 0;
-      const hasValidFixAmount = !isNaN(fixAmount) && fixAmount > 0;
+      const hasValidCustomAmount = !isNaN(customAmount) && customAmount >= 1;
+      const hasValidFixAmount = !isNaN(fixAmount) && fixAmount >= 1;
 
       if (!hasValidCustomAmount && !hasValidFixAmount) {
-        this.errors.donation_amount = "Please Enter Amount.";
+        this.errors.donation_amount = `Please enter ${this.$formatAmount(1)} or more to make a donation`;
         this.validated = false;
       }
 
