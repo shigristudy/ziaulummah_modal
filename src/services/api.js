@@ -37,6 +37,9 @@ export default {
   makePayment(payload) {
     return axios.post(url("payments/pay"), payload);
   },
+  fetchSettings() {
+    return axios.get(url("settings"));
+  },
   fetchCategories() {
     return axios.get(url("categories"));
   },

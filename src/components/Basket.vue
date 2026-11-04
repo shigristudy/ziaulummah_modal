@@ -237,6 +237,15 @@
             <span class="text-red text-lg top-1/2 right-3 -translate-y-1/2 leading-[1] absolute">*</span>
           </div>
         </div>
+        <AddressLookup
+          v-if="!googleUnavailable"
+          @select="onAddressSelect"
+          @unavailable="googleUnavailable = true"
+        />
+        <p v-if="!showAddressFields" class="mb-2 text-sm">
+          <a href="#" class="underline text-gray-600" @click.prevent="manualAddress = true">Enter address manually</a>
+        </p>
+        <template v-if="showAddressFields">
         <div class="relative">
           <input placeholder="Address Line 1" v-model="form.address_line_1"
             :class="[errors && errors.address_line_1 ? '!border-red' : 'border-gray-300']"
@@ -276,6 +285,7 @@
               clip-rule="evenodd"></path>
           </svg>
         </div>
+        </template>
         <div class="relative">
           <input type="email" placeholder="Email Address" v-model="form.email"
             :class="[errors && errors.email ? '!border-red' : 'border-gray-300']"
@@ -529,6 +539,7 @@ import StripeDirectDebit from "../components/StripeDirectDebit.vue";
 import SetupIntent from "../components/SetupIntent.vue";
 import Gocardless from "../components/Gocardless.vue";
 import GocardlessForm from "./GocardlessForm.vue";
+import AddressLookup from "../components/AddressLookup.vue";
 export default {
   props: ["donations", "form", "stripePublicKey", "currencies", "gateways"],
   components: {
@@ -541,11 +552,15 @@ export default {
     StripeCustom,
     GocardlessForm,
     StripeDirectDebit,
-    SetupIntent
+    SetupIntent,
+    AddressLookup
   },
   data() {
     return {
       step: 1,
+      // manual address fields when the donor asks for them or Google can't be used
+      manualAddress: false,
+      googleUnavailable: false,
       countries: countries,
       errors: {},
       // isSelectedPaperCopy:false,
@@ -564,6 +579,11 @@ export default {
         : "https://www.ziaulummahfoundation.org.uk/policies/";
   },
   methods: {
+    onAddressSelect(address) {
+      Object.assign(this.form, address);
+      // show the filled fields so the donor can check or correct them
+      this.manualAddress = true;
+    },
     getGatewayPublicKey(gateway) {
       let p_gateway = this.gateways.find(
         (payment) => payment.gateway == gateway
@@ -620,6 +640,9 @@ export default {
         // }
         if (!this.form.address_line_1) {
           this.errors.address_line_1 = "Address  is required.";
+          validated = false;
+        } else if (!/\p{L}{3,}/u.test(this.form.address_line_1)) {
+          this.errors.address_line_1 = "Please enter your full address, not just the house number.";
           validated = false;
         }
         if (!this.form.city) {
@@ -719,6 +742,10 @@ export default {
   },
 
   computed: {
+    showAddressFields() {
+      // also show them when an address is already filled (e.g. going back a step)
+      return this.manualAddress || this.googleUnavailable || !!this.form.address_line_1;
+    },
     all_monthly() {
       if (this.donations.length == 0) return false;
       return this.donations.every((item) => item.monthly);
