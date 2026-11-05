@@ -2,8 +2,10 @@
   <div class="relative mb-2">
     <input
       v-model="query"
+      type="search"
+      name="zuf-lookup"
       placeholder="Start typing your address or postcode"
-      autocomplete="off"
+      autocomplete="zuf-lookup"
       class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-green focus:outline-none"
       @input="onInput"
       @keydown.down.prevent="move(1)"
